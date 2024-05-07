@@ -1,0 +1,218 @@
+#LoadEvents
+
+DOMContentLoaded – the browser fully loaded HTML and completed building the DOM tree. However, it hasn’t loaded external resources like stylesheets and images. In this event, you can start selecting DOM nodes or initialize the interface.
+
+load – the browser fully loaded the HTML and also external resources like images and stylesheets.
+When you leave the page, the following events fire in sequence:
+
+beforeunload – fires before the page and resources are unloaded. You can use this event to show a confirmation dialog to confirm if you really want to leave the page. By doing this, you can prevent data loss in case you are filling out a form and accidentally click a link to navigate to another page.
+
+unload – fires when the page has completely unloaded. You can use this event to send the analytic data or to clean up resources.
+
+addEventListener('DOMContentLoaded', (event) => {
+            console.log('The DOM is fully loaded.');
+        });
+
+        addEventListener('load', (event) => {
+            console.log('The page is fully loaded.');
+        });
+
+        addEventListener('beforeunload', (event) => {
+            // show the confirmation dialog
+            event.preventDefault();
+            // Google Chrome requires returnValue to be set.
+            event.returnValue = '';
+        });
+
+        addEventListener('unload', (event) => {
+            // send analytic data
+        });
+
+#Window load event
+
+window.addEventListener('load', (event) => {
+    console.log('The page has fully loaded');
+});
+
+Or use the onload property of the window object:
+
+window.onload = (event) => {
+    console.log('The page has fully loaded');
+};
+
+#Image Load 
+
+The load event also fires on images. To handle the load event on images, you use the addEventListener() method of the image elements.
+
+<img id="logo">
+    <script>
+        let logo = document.querySelector('#logo');
+
+        logo.addEventListener('load', (event) => {
+            console.log('Logo has been loaded!');
+        });
+
+        logo.src = "logo.png";
+    </script>
+
+#MouseEvents
+The mousedown fires when you depress the mouse button on the element.
+The mouseup fires when you release the mouse button on the element.
+The click fires when one mousedown and one mouseup detected on the element.
+The mouseenter fires when the mouse cursor is outside of an element and then moves to inside the boundaries of the element.
+
+The mouseleave fires when the mouse cursor is over an element and then moves to the outside of the element’s boundaries.
+
+mousedown
+ mouseup
+ click
+ dblclick
+mouseenter
+mouseleave
+
+  // disable context menu when right-mouse clicked
+        btn.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+// show the mouse event message
+        btn.addEventListener('mouseup', (e) => {
+            let msg = document.querySelector('#message');
+            switch (e.button) {
+                case 0:
+                    msg.textContent = 'Left mouse button clicked.';
+                    break;
+                case 1:
+                    msg.textContent = 'Middle mouse button clicked.';
+                    break;
+                case 2:
+                    msg.textContent = 'Right mouse button clicked.';
+                    break;
+                default:
+                    msg.textContent = `Unknown mouse button code: ${event.button}`;
+            }
+        });
+
+
+#keyboard events
+keydown – fires when you press a key on the keyboard and fires repeatedly while you’re holding down the key.
+keyup – fires when you release a key on the keyboard.
+keypress – fires when you press a character keyboard like a,b, or c, not the left arrow key, home, or end keyboard, … The keypress also fires repeatedly while you hold down the key on the keyboard.
+
+let textBox = document.getElementById('message');
+        textBox.addEventListener('keydown', (event) => {
+            console.log(`key=${event.key},code=${event.code}`);
+
+        });
+
+#Focus Events
+focus fires when an element has received focus.
+blur fires when an element has lost focus.
+
+<form id="form">
+        <input type="text" placeholder="username">
+        <input type="password" placeholder="password">
+    </form>
+
+    <script>
+        const pwd = document.querySelector('input[type="password"]');
+
+        pwd.addEventListener('focus', (e) => {
+            e.target.style.backgroundColor = 'yellow';
+        });
+
+        pwd.addEventListener('blur', (e) => {
+            e.target.style.backgroundColor = '';
+        });
+    </script>
+
+#custom event
+
+The below steps are followed to create one using a new Event.
+
+We create an event using the Event constructor.
+We listen to this event using the addEventListener() method.
+We trigger or dispatch the event using element.dispatchEvent(eventName) method.
+A custom Event named start has now been created.
+
+Example: We are creating an event that is triggered when the value of x is 5.
+<html> 
+<body>
+  <script>
+    let x = 5;
+    const event = new Event("start");
+     
+    document.addEventListener('start', ()=>{
+      console.log("Start event triggered")
+    });
+     
+    if(x == 5){
+      document.dispatchEvent(event);
+    }
+  </script>
+</body>
+</html>
+
+#scroll
+
+targetElement.addEventListener('scroll', (event) => {
+    // handle the scroll event 
+});
+
+window.addEventListener('scroll',(event) => {
+    console.log('Scrolling...');
+});
+
+#MutationObserver
+The MutationObserver API allows you to monitor for changes being made to the DOM tree. When the DOM nodes change, you can invoke a callback function to react to the changes.
+
+First, define the callback function that will execute when the DOM changes:
+
+function callback(mutations) {
+    // 
+}
+
+Second, create a MutationObserver object and pass the callback to the MutationObserver() constructor:
+
+let observer = new MutationObserver(callback);
+
+Third, call the observe() method to start observing the DOM changes.
+
+observer.observe(targetNode, observerOptions);
+Code language: JavaScript (javascript)
+The observe() method has two parameters. The target is the root of the subtree of nodes to monitor for changes. The observerOptions parameter contains properties that specify what DOM changes should be reported to the observer’s callback.
+
+Finally, stop observing the DOM changes by calling the disconnect() method:
+
+observer.disconnect();
+
+let options = {
+    childList: true,
+    attributes: true,
+    characterData: false,
+    subtree: false,
+    attributeFilter: ['attr1', 'attr2'],
+    attributeOldValue: false,
+    characterDataOldValue: false
+};
+
+Example
+// define the target node
+var targetNode = document.body;
+
+const callback = function (mutations, observer) { 
+console.log('Changes Detected');
+for (let mutation of mutations) {
+        if (mutation.type === 'childList') {
+            console.log(mutation);
+        }
+    }
+};
+
+// configuration of the observer
+const config = { childList: true, characterData: true, subtree: true, attributes: true, };
+
+
+// Create observer instance
+const observer = new MutationObserver(callback);
+observer.observe(targetNode, config);

@@ -1,0 +1,82 @@
+#classList
+
+<div id="content" class="main red">JavaScript classList</div>   
+
+let div = document.querySelector('#content');
+for (let cssClass of div.classList) {
+    console.log(cssClass);
+}
+Output:
+
+main
+red
+
+1.Add
+div.classList.add('info');
+div.classList.add('info','visible','block');
+
+2.Remove
+div.classList.remove('visible');
+div.classList.remove('block','red');
+
+3.Replace
+div.classList.replace('info','warning');
+
+4.Contains
+div.classList.contains('warning'); // true
+//returns boolean 
+
+5.Toggle Class 
+If the class list of an element contains a specified class name, the toggle() method removes it. If the class list doesn’t contain the class name, the toggle() method adds it to the class list.
+div.classList.toggle('visible');
+
+#width and height of element 
+
+<div class="box" style="width:100px;height:150px;border:solid 1px #000;padding:10px"></div>
+    <script>
+        let box = document.querySelector('.box');
+        let width = box.offsetWidth;
+        let height = box.offsetHeight;
+        console.log({ width, height });
+    </script>
+
+Output:
+
+{width: 122, height: 172}
+In this example:
+
+The width is 100px
+The border is 1px on each side, so 2px for both
+The padding 10px on each side, so 20px for both
+
+#clientWidth & clientHeight : without including border
+To get the element’s width and height that include padding but without the border, you use the clientWidth and clientHeight properties:
+
+let box = document.querySelector('.box');
+let width = box.clientWidth;
+let height = box.clientHeight;
+
+#To get the margin of an element, you use the getComputedStyle() method:
+
+let box = document.querySelector('.box');
+let style = getComputedStyle(box);
+
+let marginLeft = parseInt(style.marginLeft);
+let marginRight = parseInt(style.marginRight);
+let marginTop = parseInt(style.marginTop);
+let marginBottom = parseInt(style.marginBottom);
+
+To get the border width of an element, you use the property of the style object returned by the getComputedStyle() method:
+
+let box = document.querySelector('.box');
+let style = getComputedStyle(box);
+
+let borderTopWidth = parseInt(style.borderTopWidth) || 0;
+let borderLeftWidth = parseInt(style.borderLeftWidth) || 0;
+let borderBottomWidth = parseInt(style.borderBottomWidth) || 0;
+let borderRightWidth = parseInt(style.borderRightWidth) || 0;
+
+To get the height and width of the window, you use the following code:
+
+let width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+let height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;

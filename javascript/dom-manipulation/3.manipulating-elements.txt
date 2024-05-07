@@ -1,0 +1,101 @@
+#CreateElement -  create a new element.
+#append Child - append a node to a list of child nodes of a specified parent node.
+
+<ul id="menu">
+    <li>Home</li>
+</ul>
+
+let li = document.createElement('li');
+li.textContent = 'Products';
+menu.appendChild(li);
+
+li = document.createElement('li');
+li.textContent = 'About Us';
+
+// select the ul menu element
+const menu = document.querySelector('#menu');
+menu.appendChild(li);
+
+<ul id="menu">
+    <li>Home</li>
+    <li>Products</li>
+    <li>About Us</li>
+</ul>
+
+
+#textContext
+<div id="note">
+    JavaScript textContent Demo!
+    <span style="display:none">Hidden Text!</span>
+    <!-- my comment -->
+</div>
+
+let note = document.getElementById('note');
+console.log(note.textContent);
+Out:
+JavaScript textContent Demo!
+Hidden Text!
+
+console.log(note.innerText);
+Out:
+JavaScript textContent Demo!
+
+#innerHTML
+ <ul id="menu">
+    <li>Home</li>
+    <li>Services</li>
+</ul>
+
+let menu = document.getElementById('menu');
+console.log(menu.innerHTML);
+
+Out:
+<li>Home</li>
+<li>Services</li>
+
+#insertAdjacentHTML
+
+<ul id="list">
+         <li>CSS</li>
+</ul>
+
+let list = document.querySelector('#list');
+
+list.insertAdjacentHTML('beforebegin', '<h2>Web Technology</h2>');
+list.insertAdjacentHTML('afterbegin', '<li>HTML</li>');
+list.insertAdjacentHTML('beforeend', '<li>JavaScript</li>');
+list.insertAdjacentHTML('afterend', '<p>For frontend developers</p>');
+
+Out:
+<h2>Web Technology</h2> -- beforebegin
+<ul id="list">
+        <li>HTML</li> -- after begin
+         <li>CSS</li>
+         <li>JavaScript</li> -- before end 
+</ul>
+<p>For frontend developers</p> -- after end 
+
+For middle elements
+To insert a node before 
+existingNode.parentNode.insertBefore(newNode, existingNode);
+
+To insert a node after
+existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+
+#removeChild
+
+<ul id="menu">
+    <li>Home</li>
+    <li>Products</li>
+    <li>About Us</li>
+</ul>
+
+let menu = document.getElementById('menu');
+menu.removeChild(menu.lastElementChild);
+
+--remove all child
+let menu = document.getElementById('menu');
+while (menu.firstChild) {
+    menu.removeChild(menu.firstChild);
+}
+

@@ -1,0 +1,46 @@
+<div id="main">
+    <p class="note">This is a note!</p>
+</div>
+
+--parentNode : get parent node of an element
+
+
+let note = document.querySelector('.note');
+console.log(note.parentNode);
+
+--child element : get children of an element
+<ul id="menu">
+    <li class="first">Home</li>
+    <li>Products</li>
+    <li class="current">Customer Support</li>
+    <li>Careers</li>
+    <li>Investors</li>
+    <li>News</li>
+    <li class="last">About Us</li>
+  </ul>
+
+--first child
+  let content = document.getElementById('menu');
+console.log(content.firstElementChild);
+Out:
+<li class="first">Home</li>
+
+--last child 
+let lastChild = parentElement.lastElementChild;
+Out: 
+<li class="last">About Us</li>
+
+--allchild
+returns a list
+let children = parentElement.childNodes;
+
+--sibling : get siblings of an element.
+let current = document.querySelector('.current');
+let nextSibling = current.nextElementSibling;
+let prevSibling = currentNode.previousElementSibling;
+
+console.log(nextSibling)
+console.log(prevSibling)
+Out:
+<li>Careers</li>
+<li>Products</li>

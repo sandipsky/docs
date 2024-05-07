@@ -1,0 +1,35 @@
+<input type="text" id="username">
+The input element has two attributes:
+
+-The type attribute with the value text.
+-The id attribute with the value username.
+
+#setAttribute
+ <button id="btnSend">Send</button>
+
+let btnSend = document.querySelector('#btnSend');
+btnSend.setAttribute('name', 'send');
+btnSend.setAttribute('disabled', '');
+
+#getAttribute
+ <a href="https://www.javascripttutorial.net" 
+        target="_blank" 
+        id="js">JavaScript Tutorial
+    </a>
+let link = document.querySelector('#js');
+        if (link) {
+            let target = link.getAttribute('target');
+            console.log(target);
+        }
+
+Output
+
+_blank
+
+#removeAttribute
+let link = document.querySelector('#js');
+        if (link) {
+            link.removeAttribute('target');
+        }
+
+#hasAttribute() : checks for attribute is present, return boolean

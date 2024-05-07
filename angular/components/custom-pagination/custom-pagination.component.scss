@@ -1,0 +1,80 @@
+.paginator {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.dropdown-btn {
+    position: relative;
+
+    svg {
+        rotate: 90deg;
+    }
+}
+
+.page-items {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.paginator-btn {
+    border: 1px solid rgb(228, 228, 231);
+    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+    border-radius: 6px;
+    padding: 6px;
+    background-color: white;
+    color: #4b5563;
+
+    &:hover{
+        background-color: #f4f4f5;
+    }
+
+    &.disabled {
+        color: #a3a3a3;
+        background-color: transparent;
+        cursor: default;
+    }
+}
+
+.dropdown-content {
+    visibility: hidden;
+    min-width: inherit;
+    opacity: 0;
+    transition: visibility 0.15s linear, opacity 0.15s linear;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    box-shadow: 0 4px 10px #00000008, 0 0 2px #0000000f, 0 2px 6px #0000001f;
+    border-radius: 6px;
+    background-color: white;
+    width: auto;
+    padding: 6px 0px;
+    display: flex;
+    flex-direction: column;
+
+    &.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    a {
+        padding: 6px 14px;
+        color: #4b5563;
+        text-decoration: none;
+
+        &:hover {
+            background-color: #f3f4f6;
+        }
+
+        &.active {
+            background-color: rgba(59, 130, 246, 0.24);
+            color: #1d4ed8;
+        }
+    }
+}
+
+.arrow-buttons {
+    display: flex;
+    gap: 6px;
+}

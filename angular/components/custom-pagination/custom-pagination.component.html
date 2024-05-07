@@ -1,0 +1,53 @@
+<div class="paginator">
+    <div class="page-items">
+        <span>Items per page</span>
+        <button class="paginator-btn dropdown-btn" (click)="toggleDropdown()">
+            {{pageSize}} <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M14.83,11.29,10.59,7.05a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41L12.71,12,9.17,15.54a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l4.24-4.24A1,1,0,0,0,14.83,11.29Z" />
+            </svg>
+            <div class="dropdown-content" [ngClass]="{'active': isOpen, }" (clickOutside)="closeDropdown()">
+                <a [ngClass]="{'active': item == pageSize, }" (click)="onchangePageOption(item)" *ngFor="let item of pageSizeOptions">{{item}}</a>
+            </div>
+        </button>
+    </div>
+
+    <span>Page {{pageIndex + 1}} of {{calculateTotalPages()}} </span>
+
+    <div class="arrow-buttons">
+
+        <button style="transform: rotate(180deg);" [ngClass]="pageIndex == 0 ? 'disabled' : ''"
+            (click)="pageIndex == 0 ? null : goFirstPage()" class="paginator-btn">
+            <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8.46,8.29A1,1,0,1,0,7,9.71L9.34,12,7,14.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l3-3a1,1,0,0,0,0-1.42Zm8.5,3-3-3a1,1,0,0,0-1.42,1.42L14.84,12l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l3-3A1,1,0,0,0,17,11.29Z" />
+            </svg>
+
+        </button>
+
+        <button style="transform: rotate(180deg);" [ngClass]="pageIndex == 0 ? 'disabled' : ''"
+            (click)="pageIndex == 0 ? null : onPrevAndNext('prev')" class="paginator-btn">
+            <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M14.83,11.29,10.59,7.05a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41L12.71,12,9.17,15.54a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l4.24-4.24A1,1,0,0,0,14.83,11.29Z" />
+            </svg>
+        </button>
+
+        <button [ngClass]="(pageIndex+1) == calculateTotalPages() ? 'disabled' : ''"
+            (click)="(pageIndex+1) == calculateTotalPages() ? null : onPrevAndNext('next')" class="paginator-btn">
+            <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M14.83,11.29,10.59,7.05a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41L12.71,12,9.17,15.54a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l4.24-4.24A1,1,0,0,0,14.83,11.29Z" />
+            </svg>
+        </button>
+
+        <button [ngClass]="(pageIndex+1) == calculateTotalPages() ? 'disabled' : ''"
+            (click)="(pageIndex+1) == calculateTotalPages() ? null : goLastpage()" class="paginator-btn">
+            <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8.46,8.29A1,1,0,1,0,7,9.71L9.34,12,7,14.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l3-3a1,1,0,0,0,0-1.42Zm8.5,3-3-3a1,1,0,0,0-1.42,1.42L14.84,12l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l3-3A1,1,0,0,0,17,11.29Z" />
+            </svg>
+        </button>
+    </div>
+</div>
