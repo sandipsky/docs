@@ -1,0 +1,6 @@
+<link href="animate.css" type="text/css" rel="stylesheet"/>
+<div class="wow zoomInDown"></div>
+<script src="wow.min.js"></script>
+    <script>
+    new WOW().init();
+    </script>
