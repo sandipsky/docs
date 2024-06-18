@@ -1,12 +1,15 @@
-import { Directive, Component, Input, ElementRef, Output, EventEmitter, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
 
 
 @Component({
-  selector: 'app-custom-pagination',
-  templateUrl: './custom-pagination.component.html',
-  styleUrls: ['./custom-pagination.component.scss']
+  selector: 'app-paginator',
+  templateUrl: './paginator.component.html',
+  styleUrls: ['./paginator.component.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
-export class CustomPaginationComponent {
+export class PaginatorComponent {
   @Input() pageSizeOptions: number[] = [25, 50, 100];
   @Input() pageSize: number = 25;
   @Input() pageIndex: number = 0;
