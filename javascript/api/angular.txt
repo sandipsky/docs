@@ -1,0 +1,77 @@
+#Without async/await
+
+#In your service
+getData(): Promise<any> {
+  const url = `your-url`;
+
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer your-auth-token',
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error in service:', error);
+      throw error;
+    });
+}
+
+#In your component
+getData() {
+  this.apiService
+    .getData()
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error fetching report in component:', error);
+    });
+}
+
+
+#Using async/await
+
+In Service
+getData(): Promise<any> {
+  const url = `your-url`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer your-auth-token',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error in service:', error);
+    throw error;
+  }
+}
+
+In component
+
+async getReport() {
+  try {
+    const data = await this.apiService.getData();
+    console.log(data);
+  } catch (error) {
+    console.error('Error fetching report in component:', error);
+  }
+}
+
+
+

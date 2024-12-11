@@ -1,0 +1,52 @@
+#Wihout async/await
+
+const url = `your-url`;
+
+fetch(url, {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer your-auth-token', 
+  },
+})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log('Data received:', data);
+    // Handle the received data here
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+
+#Using async/await 
+const fetchBulkSalesOrderReport = async (fromDate) => {
+  const url = `url`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer your-auth-token', 
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Data received:', data);
+    // Handle the received data here
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+fetchBulkSalesOrderReport();
