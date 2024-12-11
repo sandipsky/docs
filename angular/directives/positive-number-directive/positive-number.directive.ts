@@ -4,20 +4,24 @@ import { Directive, HostListener, Input } from '@angular/core';
   selector: '[appPositiveNumbers]'
 })
 export class PositiveNumbersDirective {
-  
-  @Input() allowZero: boolean = false;  // Flag to allow or disallow 0
+  @Input() allowZero: boolean = true;
+  @Input() maxDecimals: number = 2;
 
   constructor() { }
 
   @HostListener('keypress', ['$event'])
   onKeyPress(event: any) {
-    const reg = this.allowZero 
-      ? /^(0|[1-9]\d*)(\.\d{0,2})?$/g   // Allow 0 if flag is true
-      : /^([1-9]\d*)(\.\d{0,2})?$/g;     // Do not allow 0 if flag is false
+    const char = String.fromCharCode(event.charCode);
+    const inputValue = event.target.value;
 
-    let input = event.target['value'] + String.fromCharCode(event.charCode);
-    
-    if (!reg.test(input)) {
+    const decimalPart = this.maxDecimals > 0 ? `\\.\\d{0,${this.maxDecimals}}` : '';
+    const regExpString = this.allowZero
+      ? `^([0-9]\\d*)(?:${decimalPart})?$`
+      : `^([1-9]\\d*)(?:${decimalPart})?$`;
+    const reg = new RegExp(regExpString);
+    const newValue = inputValue + char;
+
+    if (!reg.test(newValue)) {
       event.preventDefault();
     }
   }
