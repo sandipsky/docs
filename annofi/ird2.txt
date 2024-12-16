@@ -1,0 +1,163 @@
+IRD Checklist
+API Connection with IRD as per the required document.
+Maintain Activity Log in Sales and Sales Return.
+Should be able to print the activity log.
+Should be able to Print the Sales Invoice and should maintain the number of prints of an invoice.
+The export and download of the tables in databases in the format of PDF through the User Interface.
+Take a backup of the Activity Log through the system.
+The user manual of the system shall be in printed form and also kept in the form of a ‘Help’ option in the user interface.
+ 
+
+IRD Requirement
+
+1) Invoice Printing
+
+1.1) The system should allow users to print sales invoices with the following conditions:
+
+If the company is registered for VAT, the printed sales invoice should be labeled as "Tax Invoice".
+If the company is not registered for VAT, the printed sales invoice should be labeled as "Invoice".
+2) Printing of Sales
+
+VAT-Invoice – 1st copy print – TAX INVOICE – Invoice No.
+VAT- Invoice – 2nd copy print – INVOICE – Invoice No.
+VAT- Invoice – 3rd copy print – INVOICE – Invoice No.
+VAT- Invoice – 4th copy print – INVOICE – Copy of Original –1 Invoice No.
+PAN-Invoice – 1st copy print – INVOICE – Invoice No.
+PAN-Invoice – 2nd copy print – INVOICE – Invoice No.
+PAN- Invoice – 3rd copy print – INVOICE – Copy of Original –1 Invoice No.
+3) Printing of Sales Return
+
+While printing the sales return the label should be “CREDIT NOTE”.
+Sales Return No should be labeled as "Cr.Note No."
+4) Add received by field on Sales and Sales Return Invoice Print.
+
+5) The system should not allow users to edit the Sales and Sales Return after the creation of invoices. - F
+
+6) The system should not allow the user to edit Invoice Date and Posting Date (make it read only field). #If only subscription setting is on IRD. - F
+
+7) The system should allow user's to take backup of database and also allow them to recover (Roles and Permission Driven) - F
+
+While downloading the file the date and time should be there on .sql file name
+The system should have a log to see the date and time of backup and recovery.
+8) CBMS Data Storage
+
+Ensure that sales and sales return data can be stored in the central database used by the Central Billing Monitoring System (CBMS) of IRD.
+9) In Settings their should have to field to add usernameIRD and PasswordIRD (User should not be allowed to change it form user interface). - F
+
+10) Non - IRD Print of Sales and Sales Return
+
+For Sales - Lable should be “SALES” with the water mark - “For Internal Purpose”.
+For Sales Return - Lable should be “SALES RETURN” with the water mark - “For Internal Purpose”.
+11) Company IRD Verification Setting (Configuration Setting)
+
+11.1) The system should have a configuration setting to verify whether a customer is registered with the IRD. This should be a read-only field that users cannot change but can view.
+
+If the customer(company) is registered with IRD, the system should allow the printing of sales and sales return invoices as mentioned in point no. 2 and 3.
+If the customer(company) is not registered with IRD, the system should allow the printing of sales and sales return invoices as mentioned in point no 10.
+12) There should be a setting for printing the Sales and Sales Return Invoices with a Letterhead.
+
+For example: Allow Print with Letterhead - YES | NO.
+If it is set to "YES," then the invoice should be printed with the Letterhead.
+If it is set to "NO," then the invoice should be printed without the Letterhead.
+13) The system should have a Inventory Report where it should handle all the stock transaction (Purchase/Purchase Return/Sales/Sales Return)
+
+14) DBMS Compatibility: Must be based on a DBMS that supports Structured Query Language (SQL).
+
+15) Data Integrity: The system must prevent deletion of sales invoice and sales return data once entered into the database.
+
+16) In database Table Trigger should be added on “masterssalesentry” and “salesentry” and aslo on “mastersalesreturn” and “salesreturn” to prevent from deletation.
+
+17) Audit log should be implemeted to track the daily activity log archieve. - F
+
+Audit Log: 
+
+Filter
+Form Date *
+To Date *
+Bill Type - Sales/SalesReturn
+Columns
+
+SN.	Bill Date	Bill No.	Activity Date/Time	Activity	Created By.
+1	2081-05-12	2081-82|SI-000001	2081-05-12, 11:25 AM	Created: Sales for 527.0	Riden Aryal
+18) Chronological Invoice Numbers: Invoice numbers should be generated and stored in chronological order.
+
+19) User Documentation
+
+User Manual:
+Provide a printed user manual.
+Include a 'Help' option within the user interface for software guidance.
+20) Integration with Central Billing Monitoring System (CBMS)
+
+Web Service/Web-API:
+Ensure that the system’s Web service or Web-API is compatible with the CBMS for data storage and retrieval.
+21) IRD reports should be implemented such as: - F
+
+Purchase Book as per IRD
+Purchase Return Book as per IRD.
+Sales Book as per IRD.
+Sales Return Book as per IRD.
+Sales Report Materalized View.
+22) Oncle the invoice is Cancelled automatically system should create new Sales Return of that cancelled invoice (reverse entry and vice-versa for sales return) - F
+
+23) Data Export: Export data in Excel, XML, and PDF formats.
+
+24) When syncing the sales invoice:
+
+Invoice Details	CBMS Sync
+1) Case 1: PAN
+
+2081-82|SI-000022
+
+Sub Total - 88,382.20
+
+Discount - 0.00
+
+Non-taxable Amount - 88,382.20
+
+Rounding - -0.20
+
+Total - 88,382.00
+
+1) Case 1: PAN
+
+    Total Sales/Export - 88,382.00 (Total)
+
+     Excempted Sales - 88,382.00 (Total)
+
+ 
+
+2) Case 2: VAT
+
+2081-82|SI-000023 
+
+Sub Total - 88,382.20
+
+Discount - 40.00
+
+Non-taxable Amount - 87,342.20
+
+Taxable Amount - 1000.00
+
+Tax - 130.00
+
+Rounding - -0.00
+
+Total - 88,472.20
+
+2) Case 2: VAT
+
+    Total Sales/Export - 88,342.20 (Amount before VAT) (Total - VAT)
+
+     Excempted Sales -  87,342.20 (Non-taxable Amount)
+
+     Taxable Sales - 1000.00 (Taxable Amount)
+
+     VAT - 130.00 (Tax)
+
+24) Logging POST Method Responses (only if Company is register on IRD)
+
+The system should create a text log file when the response to a POST method is other than 200 (OK) on sales and sales return.
+25) Handling Invoices (only if Company is register on IRD)
+
+If an invoice is send to CBMS, it should be flagged in the database on sales and sales return.
+The system should automatically run a “cron-job” every minute to send the invoices in chronological order.

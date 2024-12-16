@@ -1,0 +1,18 @@
+export class CartComponent {
+  cartItems = this.cartService.getCartItems()(); // Read initial cart state
+  cartCount = this.cartService.cartCount(); // Initial count from computed signal
+  cartTotal = this.cartService.cartTotal(); // Initial total from computed signal
+
+  constructor(private cartService: CartService) {
+    // Reactively update state when signals change
+    effect(() => {
+      this.cartItems = this.cartService.getCartItems()();
+      this.cartCount = this.cartService.cartCount();
+      this.cartTotal = this.cartService.cartTotal();
+    });
+  }
+
+  clearCart() {
+    this.cartService.clearCart();
+  }
+}
