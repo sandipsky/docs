@@ -1,0 +1,17 @@
+<div [style.width.px]="width" [style.height.px]="height" class="carousel-container">
+  <!-- Slides -->
+  <div class="carousel-wrapper" [style.transform]="'translateX(' + (-currentIndex * 100) + '%)'">
+    <img [style.width.px]="width" [style.height.px]="height" *ngFor="let image of images" [src]="image"
+      class="carousel-slide" alt="Slide">
+  </div>
+
+  <!-- Navigation Buttons -->
+  <button class="carousel-btn prev" (click)="prevSlide()">&#10094;</button>
+  <button class="carousel-btn next" (click)="nextSlide()">&#10095;</button>
+
+  <!-- Dots Navigation -->
+  <div class="carousel-dots">
+    <button *ngFor="let image of images; let i = index" [class.active]="i === currentIndex" (click)="goToSlide(i)">
+    </button>
+  </div>
+</div>
