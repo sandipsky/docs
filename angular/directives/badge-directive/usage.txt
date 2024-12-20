@@ -1,0 +1,3 @@
+<div appBadge [badgeContent]="count" style="width: 100px;">
+    Host Element
+</div>
