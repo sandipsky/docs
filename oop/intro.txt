@@ -1,0 +1,32 @@
+Class : 
+building block of object oriented programs. also blueprint for object
+
+Object: 
+instance of class,
+data member and methods of class cant be used directly so we need to make object.
+
+Features of OOPS:
+
+Encapsulation: 
+binding data and methods into single unit to hide sensitive data from users.
+
+data hiding using access modifiers: private, public protected
+bundling of data and methods using class 
+
+Abstraction:
+showing only necessary info and hiding complex and irrelevant  info from user.
+implemented using classes.
+
+Polymorphism:
+some code to behave differently for different contexts. muliple function with same name 
+
+-compile time Polymorphism(static polymorphism):
+binding of the call to its code is done at the compile time. Method overloading or operator overloading are examples of compile-time polymorphism.
+
+-runtime polymorphism(dynamic polymorphism):
+actual implementation of the function is determined during the runtime or execution. Method overriding is an example of this method.
+
+Inheritance: 
+a class is derived from another class and uses data and implementation of that other class. The class which is derived is called child or derived or subclass and the class from which the child class is derived is called parent or base or superclass.
+
+The main purpose of Inheritance is to increase code reusability. It is also used to achieve Runtime Polymorphism.
