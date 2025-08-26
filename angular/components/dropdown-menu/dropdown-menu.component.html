@@ -1,0 +1,7 @@
+<div class="dropdown-menu" (click)="toggleDropdown()">
+    <ng-content select="[dropdown-display]"></ng-content>
+
+    <div class="dropdown-content" [class.active]="isOpen" (clickOutside)="closeDropdown()">
+        <ng-content select="[dropdown-item]"></ng-content>
+    </div>
+</div>

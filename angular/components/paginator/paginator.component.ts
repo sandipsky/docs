@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
 
 
 @Component({
@@ -19,17 +19,14 @@ export class PaginatorComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    const dropdownContent = document.querySelector('.dropdown-content');
-    const dropdownButton = document.querySelector('.dropdown-btn');
-
-    if (!dropdownContent?.contains(event.target as Node) && !dropdownButton?.contains(event.target as Node)) {
+    if (!this.el.nativeElement.contains(event.target)) {
       this.closeDropdown();
     }
   }
 
   isOpen: boolean = false
 
-  constructor() { }
+  constructor(private el: ElementRef) { }
 
   onPageChange(): void {
     this.pageChange.emit({ pageIndex: this.pageIndex, pageSize: this.pageSize, length: this.length });
