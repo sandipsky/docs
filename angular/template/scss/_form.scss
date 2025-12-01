@@ -1,0 +1,156 @@
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+
+    label {
+        color: var(--text-primary-color);
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-semi-bold);
+        line-height: var(--line-height-small);
+    }
+
+    .form-control-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        align-self: stretch;
+    }
+
+    .form-control {
+        padding: 12px;
+        border: 1px solid var(--disabled-color);
+        background-color: var(--white-color);
+        border-radius: 12px;
+        outline: none;
+        display: flex;
+        align-items: flex-start;
+        align-self: stretch;
+        gap: 12px;
+
+        color: var(--text-primary-color);
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-regular);
+        line-height: var(--line-height-small);
+
+        ::placeholder {
+            color: var(--placeholder-text-color);
+        }
+
+        &.readonly {
+            background-color: var(--disabled-alt-color);
+            color: var(text-disabled-color);
+        }
+
+        &.error {
+            background-color: var(--error-bg-color);
+            border-color: var(--error-text-color);
+        }
+    }
+
+    .alert {
+        display: flex;
+        padding: 4px 8px;
+        align-items: center;
+        gap: 8px;
+        align-self: stretch;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: var(--font-weight-regular);
+        line-height: 16px;
+
+        &.success {
+            background-color: var(--success-bg-color);
+            color: var(--success-text-color);
+        }
+
+        &.error {
+            background-color: var(--error-bg-color);
+            color: var(--error-text-color);
+        }
+
+        &.warn {
+            background-color: var(--warn-bg-color);
+            color: var(--warn-text-color);
+        }
+
+        &.info {
+            background-color: var(--info-bg-color);
+            color: var(--info-text-color);
+        }
+    }
+
+}
+
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: var(--success-text-color);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px var(--success-text-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(16px);
+    /* 26 × 0.6 */
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 20px;
+    /* 34 × 0.6 ≈ 20 */
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+//Hide arrow on number input
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
