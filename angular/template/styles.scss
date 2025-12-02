@@ -6,6 +6,7 @@
 @import "scss/_button";
 @import "scss/_form";
 @import "scss/_modal";
+@import "scss/_table";
 
 * {
     margin: 0;
@@ -25,4 +26,41 @@ body {
     border-radius: 0 !important;
     box-shadow: none !important;
     overflow: visible;
+}
+
+.ng-select {
+    align-self: stretch;
+    outline: none;
+    box-shadow: none;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+.ng-select .ng-select-container {
+    padding: 12px !important;
+    height: auto !important;
+    border: 1px solid var(--disabled-color);
+    background-color: var(--white-color);
+    border-radius: 12px;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-input {
+    left: 1.5% !important;
+    top: 10px !important;
+}
+
+
+.ng-select .ng-select-container .ng-value-container .ng-input>input {
+    color: var(--text-primary-color);
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-small);
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-placeholder {
+    color: #757575;
+    margin-left: -8px !important;
+    font-size: var(--font-size-small) !important;
+    font-weight: var(--font-weight-regular) !important;
+    line-height: var(--line-height-small) !important;
 }

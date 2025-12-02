@@ -1,15 +1,11 @@
 .paginator {
     display: flex;
-    height: 32px;
-    padding: 0 12px;
-    justify-content: space-between;
     align-items: center;
-    align-self: stretch;
+    gap: 32px;
 }
 
 .paginator-dropdown-btn {
     position: relative;
-    width: auto !important;
 
     svg {
         rotate: 90deg;
@@ -20,55 +16,21 @@
     display: flex;
     align-items: center;
     gap: 6px;
-
-
-}
-
-.page-text {
-    color: #07090F;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 20px;
-
-    &.bold {
-        font-weight: 700;
-    }
-
-    &.light {
-        color: #6B7280;
-    }
 }
 
 .paginator-btn {
-    border: 1px solid #E5E7EB;
+    border: 1px solid rgb(228, 228, 231);
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 6px;
-    background: transparent;
+    width: auto;
     display: flex;
-    width: 32px;
-    height: 32px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    aspect-ratio: 1/1;
-    cursor: pointer;
+    background-color: white;
+    color: #4b5563;
 
-    color: #07090F;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-
-    &:hover {
+    &:hover{
         background-color: #f4f4f5;
     }
-
-    &.active {
-        background-color: #006AE4;
-        color: #F9FAFB;
-    }
-
-
 
     &.disabled {
         color: #a3a3a3;
@@ -92,7 +54,6 @@
     padding: 6px 0px;
     display: flex;
     flex-direction: column;
-    z-index: 2;
 
     &.active {
         visibility: visible;
@@ -118,8 +79,4 @@
 .arrow-buttons {
     display: flex;
     gap: 6px;
-}
-
-span {
-    font-size: 12px;
 }

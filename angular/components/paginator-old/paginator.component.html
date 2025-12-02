@@ -1,6 +1,6 @@
 <div class="paginator">
     <div class="page-items">
-        <span class="page-text">Row per page: </span>
+        <span>Items per page</span>
         <button class="paginator-btn paginator-dropdown-btn" (click)="toggleDropdown()">
             {{pageSize}} <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg">
@@ -13,6 +13,8 @@
             </div>
         </button>
     </div>
+
+    <span>Page {{pageIndex + 1}} of {{calculateTotalPages()}} </span>
 
     <div class="arrow-buttons">
 
@@ -33,13 +35,6 @@
             </svg>
         </button>
 
-
-        <button *ngFor="let page of visiblePages" [class.active]="page === pageIndex + 1" (click)="goToPage(page - 1)"
-            class="paginator-btn">
-            {{ page }}
-        </button>
-
-
         <button [class.disabled]="(pageIndex+1) == calculateTotalPages()"
             (click)="(pageIndex+1) == calculateTotalPages() ? null : onPrevAndNext('next')" class="paginator-btn">
             <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -56,10 +51,4 @@
             </svg>
         </button>
     </div>
-
-    <span class="page-text">
-        <span class="page-text light">Showing </span> <span class="page-text bold">{{pageSize}} </span> <span
-            class="page-text light">Entries out of </span>{{length}}</span>
-
-
 </div>

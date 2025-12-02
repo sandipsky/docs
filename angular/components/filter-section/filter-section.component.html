@@ -1,0 +1,73 @@
+<div class="filter-section">
+    <div class="filter-search">
+        <img src="../../../assets/svg/search.svg" alt="">
+        <input placeholder="Search" type="text" class="list-input-search flex-grow-1 p-2" [(ngModel)]="searchText"
+            (keyup.enter)="onSearch()" />
+    </div>
+
+
+
+    <!-- Filter Dropdown  -->
+
+    <div class="filter-options">
+        <div *ngFor="let item of filterList" class="filter-item">{{item.filterName}}: {{item.displayValue}}
+            <img (click)="removeFilter(item)" src="../../../assets/svg/close.svg" alt="">
+        </div>
+
+        <span *ngIf="filterList.length > 0" class="reset-text" (click)="removeAllFilter()">Reset Filters</span>
+
+        <button (click)="toggleFilterDropdown()" class="filter-btn dropdown-btn" type="button">
+            <img src="../../../assets/svg/filter.svg" alt="">
+            Filter
+            <button class="filter-btn num">{{filterColumns.length}}</button>
+            <img src="../../../assets/svg/caret.svg" alt="">
+        </button>
+    </div>
+
+    <div *ngIf="showFilterDropdown == true" class="filter-dropdown">
+        <div class="filter-header">
+            <h1 class="filter-header-title">
+                Filter
+            </h1>
+
+            <div (click)="closeDropdown()" type="button" class="filter-btn-close">
+                <img src="../../../assets/svg/close.svg" alt="">
+            </div>
+        </div>
+
+        <div class="filter-body">
+            <ng-container *ngFor="let filter of filterColumns; index as i;">
+                <div *ngIf="filter.type == 'text'" class="form-group">
+                    <label>{{filter.name}}</label>
+                    <input (keyup.enter)="applyFilter(filter)" class="form-control" [placeholder]="filter.name"
+                        type="text" [(ngModel)]="filter.value">
+                </div>
+
+                <div *ngIf="filter.type == 'select'" class="form-group">
+                    <label>{{filter.name}}</label>
+                    <ng-select bindLabel="name" bindValue="id" [(ngModel)]="filter.value" [items]="filter.data" [placeholder]="'Select'">
+                    </ng-select>
+
+                </div>
+
+                <!-- <div *ngIf="filter.type == 'search-select'">
+                    <input (keyup)="getUsers($event)" class="ph" [placeholder]="filter.name" type="text">
+                    <div style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                        <div (click)="selectedFilter=type" class="submenu-select" *ngFor="let type of userList">
+                            <i *ngIf="selectedFilter==type" class="fa fa-check"></i>
+                            <span>{{type.name}}</span>
+                        </div>
+                    </div>
+
+                </div> -->
+            </ng-container>
+        </div>
+
+
+
+        <div class="filter-footer">
+            <button class="btn btn-secondary btn-outlined" (click)="closeDropdown()">Cancel</button>
+            <button class="btn btn-primary" (click)="applyFilter()">Apply</button>
+        </div>
+    </div>
+</div>

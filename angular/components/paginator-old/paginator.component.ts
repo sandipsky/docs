@@ -1,9 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-paginator',
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class PaginatorComponent {
   @Input() pageSizeOptions: number[] = [25, 50, 100];
@@ -12,8 +16,6 @@ export class PaginatorComponent {
   @Input() length: number = 0;
 
   @Output() pageChange: EventEmitter<{ pageIndex: number, pageSize: number, length: number }> = new EventEmitter();
-
-  visiblePages: number[] = [];
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -26,56 +28,27 @@ export class PaginatorComponent {
 
   constructor(private el: ElementRef) { }
 
-  ngOnChanges() {
-    this.updateVisiblePages();
-  }
-
   onPageChange(): void {
     this.pageChange.emit({ pageIndex: this.pageIndex, pageSize: this.pageSize, length: this.length });
   }
 
   onchangePageOption(page: number) {
     this.pageSize = page;
-    this.updateVisiblePages();
     this.onPageChange();
   }
 
   onPrevAndNext(direction: string) {
     direction == 'prev' ? this.pageIndex -= 1 : this.pageIndex += 1;
-    this.updateVisiblePages();
     this.onPageChange();
   }
 
   goFirstPage() {
     this.pageIndex = 0;
-    this.updateVisiblePages();
     this.onPageChange();
   }
 
   goLastpage() {
     this.pageIndex = this.calculateTotalPages() - 1;
-    this.updateVisiblePages();
-    this.onPageChange();
-  }
-
-  updateVisiblePages() {
-    const totalPages = this.calculateTotalPages();
-    const current = this.pageIndex + 1;
-
-    let start = Math.max(current - 2, 1);
-    let end = start + 4;
-
-    if (end > totalPages) {
-      end = totalPages;
-      start = Math.max(end - 4, 1);
-    }
-
-    this.visiblePages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
-  }
-
-  goToPage(index: number) {
-    this.pageIndex = index;
-    this.updateVisiblePages();
     this.onPageChange();
   }
 
@@ -88,8 +61,7 @@ export class PaginatorComponent {
   }
 
   closeDropdown() {
+    console.log(true);
     this.isOpen = false;
   }
-
-
 }
