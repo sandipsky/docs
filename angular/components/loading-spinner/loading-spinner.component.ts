@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { SpinnerService } from '../../services/spinner-service/spinner.service';
 
 @Component({
   selector: 'app-loading-spinner',
@@ -8,5 +7,5 @@ import { SpinnerService } from '../../services/spinner-service/spinner.service';
   encapsulation: ViewEncapsulation.ShadowDom,
 })
 export class LoadingSpinnerComponent {
-  constructor(public loader: SpinnerService) { }
+  constructor() { }
 }
