@@ -10,29 +10,31 @@
   --text-tertiary-color: #4b5563;
   --text-quaternary-color: #6b7280;
   --text-white-color: #f9fafb;
+  --text-disabled-color: #9ca3af;
 
   /* ================= Separators ================= */
   --separator-color: #e5e7eb;
   --separator-alt-color: #d1d5db;
 
   /* ================= Backgrounds ================= */
-  --bg-light-color: #fefefe;
+  --bg-lightest-color: #fefefe;
+  --bg-light-color: #f9fafb;
   --bg-semi-light-color: #f3f4f6;
   --bg-dark-color: #e5e7eb;
 
   /* ================= Status ================= */
   --success-color: #36b37e;
-  --success-alt-color: #ebf7f2;
+  --success-bg-color: #ebf7f2;
 
   --error-color: #ff4530;
-  --error-alt-color: #ffecea;
+  --error-bg-color: #ffecea;
 
   --warn-color: #ffab00;
-  --warn-alt-color: #fff7e6;
+  --warn-bg-color: #fff7e6;
 
   --info-color: #00b8d9;
-  --info-alt-color: #e6f8fb;
+  --info-bg-color: #e6f8fb;
 
   --premium-color: #ab20a9;
-  --premium-alt-color: #fbcefa;
+  --premium-bg-color: #fbcefa;
 }

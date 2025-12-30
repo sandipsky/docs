@@ -1,0 +1,51 @@
+.chip {
+  display: flex;
+  padding: 4px 8px;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+
+  background-color: var(--bg-dark-color);
+  color: var(--text-primary-color);
+
+  .circle {
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+
+  &.success {
+    background-color: var(--success-bg-color);
+    color: var(--success-text-color);
+  }
+
+  &.error {
+    background-color: var(--error-bg-color);
+    color: var(--error-text-color);
+  }
+
+  &.warn {
+    background-color: var(--warn-bg-color);
+    color: var(--warn-text-color);
+  }
+
+  &.info {
+    background-color: var(--info-bg-color);
+    color: var(--info-text-color);
+  }
+
+  &.primary {
+    background-color: var(--primary-alt-color);
+    color: var(--primary-color);
+  }
+
+  &.cancel {
+    background-color: var(--cancel-bg-color);
+    color: var(--cancel-text-color);
+  }
+}

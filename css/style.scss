@@ -11,8 +11,50 @@
 
 body {
     font-family: 'Inter', sans-serif;
+    color: var(--text-primary-color);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
 }
 
-.title {
+.heading1 {
+    color: var(--text-primary-color);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+}
 
+.heading2 {
+    color: var(--text-secondary-color);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.subheading {
+    color: var(--text-quaternary-color);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.form-label {
+    color: var(--text-primary-color);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+}
+
+.view-label {
+    color: var(--text-quaternary-color);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.view-text {
+    color: var(--text-primary-color);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 24px;
 }
