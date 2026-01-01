@@ -1,0 +1,185 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 6px;
+  margin-bottom: 20px;
+
+  .input-wrapper {
+    position: relative;
+    width: 100%;
+
+    .left-icon,
+    .right-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .left-icon {
+      left: 14px;
+    }
+
+    .right-icon {
+      right: 14px;
+    }
+
+    .right-icon.clickable {
+      cursor: pointer;
+    }
+  }
+
+  .input-wrapper .form-control {
+    width: 100%;
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+
+  .form-control {
+    padding: 10px;
+    border: 1px solid var(--separator-color, #e5e7eb);
+    background-color: var(--bg-lightest-color, #fefefe);
+    border-radius: 12px;
+    outline: none;
+    display: flex;
+    align-self: stretch;
+    align-items: flex-start;
+    gap: 12px;
+
+    color: var(--text-primary-color, #07090f);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+
+    &::placeholder {
+      color: var(--text-disabled-color, #9ca3af);
+    }
+
+    &:focus {
+      border-color: var(--primary-color, #006ae4);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--primary-alt-color, #e6f0fc);
+    }
+
+    &.readonly {
+      background-color: var(--separator-alt-color, #d1d5db);
+      color: var(--text-disabled-color, #9ca3af);
+    }
+
+    &.error {
+      background-color: var(--error-bg-color, #ffecea);
+      border-color: var(--error-color, #ff4530);
+    }
+  }
+}
+
+.form-group label,
+.form-label {
+  color: var(--text-primary-color, #07090f);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+
+  span {
+    color: var(--error-color, #ff4530);
+  }
+}
+
+.form-group.view label {
+  color: var(--text-quaternary-color, #6b7280);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.view-text {
+  color: var(--text-primary-color, #07090f);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.invalid {
+  display: flex;
+  padding: 4px 8px;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  background-color: var(--error-bg-color, #ffecea);
+  color: var(--error-color, #ff4530);
+}
+
+/* ================= Slider ================= */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--success-color, #36b37e);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--success-color, #36b37e);
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+/* ================= Number input ================= */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

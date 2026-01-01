@@ -10,32 +10,32 @@
 
   thead {
     position: sticky;
-    top: -1px;
+    top: 0px;
     z-index: 2;
   }
 
   th {
-    background: #f3f4f5;
+    background: var(--bg-semi-dark-color, #f3f4f5);
   }
 
   th,
   td {
     padding: 12px;
-    border-top: 1px solid var(--separator-color);
-    border-bottom: 1px solid var(--separator-color);
+    border-top: 1px solid var(--separator-color, #e5e7eb);
+    border-bottom: 1px solid var(--separator-color, #e5e7eb);
     text-align: left;
     white-space: nowrap;
   }
 
   th {
-    color: var(--text-secondary-color);
+    color: var(--text-secondary-color, #1f2937);
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
   }
 
   td {
-    color: var(--text-primary-color);
+    color: var(--text-primary-color, #07090f);
     font-size: 15px;
     font-weight: 400;
     line-height: 24px;
@@ -53,7 +53,7 @@
   }
 
   tr:nth-child(even) td {
-    background-color: var(--bg-light-color);
+    background-color: var(--bg-light-color, #f9fafb);
   }
 }
 
@@ -81,9 +81,8 @@
     border-right: 5px solid transparent;
     border-bottom: 5px solid;
     position: absolute;
-    right: 5px;
-    color: #bcbdbe;
     right: 4px;
+    color: var(--text-disabled-color, #9ca3af);
   }
 
   &:after {
@@ -97,16 +96,16 @@
 
   &.asc:before,
   &.desc:after {
-    color: black;
+    color: var(--text-primary-color, #07090f);
   }
 
   &.asc:after,
   &.desc:before {
-    color: #bcbdbe;
+    color: var(--text-disabled-color, #9ca3af);
   }
 
   &.none:before,
   &.none:after {
-    color: #bcbdbe;
+    color: var(--text-disabled-color, #9ca3af);
   }
 }

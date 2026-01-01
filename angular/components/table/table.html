@@ -47,10 +47,10 @@
 
                     @else if(header.special_status == true) {
                     <span
-                        [ngClass]="header.class[data.property]"
+                        [ngClass]="header?.class[data.property]"
                         class="status">
                         <div class="circle"></div>
-                        {{data[header.property]}}
+                        {{data[header?.property]}}
                     </span>
                     }
 
@@ -63,10 +63,10 @@
                     @else if(header.chip == true){
                     <div class="d-flex align-items-center gap-md">
 
-                        @for (item of data[header?.property]?.slice(0, header.maxItems); track $index) {
+                        @for (item of data[header?.property]?.slice(0, header?.maxItems); track $index) {
                         <div class="chip primary">
                             <div class="circle"></div>
-                            {{ item.name }}
+                            {{ item?.name || '-' }}
                         </div>
                         }
 
@@ -74,7 +74,7 @@
                         @if (data[header?.property]?.length > header.maxItems) {
                         <div class="chip primary" matTooltip="{{ getRemainingItems(data[header?.property], header.maxItems) }}"
                             matTooltipPosition="above">
-                            +{{ data[header?.property].length - header.maxItems }}
+                            +{{ data[header?.property]?.length - header?.maxItems }}
                         </div>
                         }
 
@@ -93,8 +93,6 @@
                             src="../../../assets/svg/eye.svg" alt="">
                         <img *ngIf="actions.includes('edit') && hasEditPermission" (click)="onEdit.emit(data)"
                             src="../../../assets/svg/edit.svg" alt="">
-                        <img *ngIf="actions.includes('change') && hasEditPermission" (click)="onChange.emit(data)"
-                            src="../../../assets/svg/change.svg" alt="">
                         <img *ngIf="actions.includes('delete') && hasDeletePermission" (click)="onDelete.emit(data)"
                             src="../../../assets/svg/trash.svg" alt="">
                     </div>
@@ -109,7 +107,7 @@
                                     fill="currentColor" />
                             </svg>
                         </div>
-                        <div *ngIf="actions.includes('view')" (click)="onView.emit(data)" class="dropdown-item"
+                        <div *ngIf="actions.includes('view') && hasViewPermission" (click)="onView.emit(data)" class="dropdown-item"
                             dropdown-item>
                             <img src="../../../assets/svg/eye.svg" alt=""> View Details
                         </div>
@@ -117,17 +115,9 @@
                             class="dropdown-item" dropdown-item>
                             <img src="../../../assets/svg/edit.svg" alt=""> Edit Details
                         </div>
-                        <div *ngIf="actions.includes('change') && hasEditPermission" (click)="onChange.emit(data)"
-                            class="dropdown-item" dropdown-item>
-                            <img src="../../../assets/svg/change.svg" alt=""> Change Details
-                        </div>
                         <div *ngIf="actions.includes('delete') && hasDeletePermission" (click)="onDelete.emit(data)"
                             class="dropdown-item" dropdown-item>
                             <img src="../../../assets/svg/trash.svg" alt=""> Delete Details
-                        </div>
-                        <div *ngIf="actions.includes('view')" (click)="onViewHistory.emit(data)" class="dropdown-item"
-                            dropdown-item>
-                            <img src="../../../assets/svg/document.svg" alt=""> View History
                         </div>
 
                     </dropdown-menu>

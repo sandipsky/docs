@@ -9,8 +9,8 @@
   font-weight: 400;
   line-height: 16px;
 
-  background-color: var(--bg-dark-color);
-  color: var(--text-primary-color);
+  background-color: var(--bg-dark-color, #e5e7eb);
+  color: var(--text-primary-color, #07090f);
 
   .circle {
     height: 6px;
@@ -20,30 +20,31 @@
   }
 
   &.success {
-    background-color: var(--success-bg-color);
-    color: var(--success-text-color);
+    background-color: var(--success-bg-color, #ebf7f2);
+    color: var(--success-text-color, #36b37e);
   }
 
   &.error {
-    background-color: var(--error-bg-color);
-    color: var(--error-text-color);
+    background-color: var(--error-bg-color, #ffecea);
+    color: var(--error-text-color, #ff4530);
   }
 
   &.warn {
-    background-color: var(--warn-bg-color);
-    color: var(--warn-text-color);
+    background-color: var(--warn-bg-color, #fff7e6);
+    color: var(--warn-text-color, #ffab00);
   }
 
   &.info {
-    background-color: var(--info-bg-color);
-    color: var(--info-text-color);
+    background-color: var(--info-bg-color, #e6f8fb);
+    color: var(--info-text-color, #00b8d9);
   }
 
   &.primary {
-    background-color: var(--primary-alt-color);
-    color: var(--primary-color);
+    background-color: var(--primary-alt-color, #e6f0fc);
+    color: var(--primary-color, #006ae4);
   }
 
+  /* cancel colors not present in reference → no hard fallback */
   &.cancel {
     background-color: var(--cancel-bg-color);
     color: var(--cancel-text-color);

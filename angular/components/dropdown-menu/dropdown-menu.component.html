@@ -1,7 +1,7 @@
-<div class="dropdown-menu" (click)="toggleDropdown()">
+<div class="dropdown-menu" [class.dropdown-active]="isOpen" [class.right]="mode === 'right'" (click)="toggle()">
     <ng-content select="[dropdown-display]"></ng-content>
 
-    <div class="dropdown-content" [class.active]="isOpen" (clickOutside)="closeDropdown()">
+    <div #content class="dropdown-content" [class.active]="isOpen" [class.open-top]="openTop" [class.nopadding]="modalMode" (click)="!closeOnItemClick && $event.stopPropagation()">
         <ng-content select="[dropdown-item]"></ng-content>
     </div>
 </div>

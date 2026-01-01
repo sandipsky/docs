@@ -20,10 +20,10 @@ export class Table {
   @Input() actions: string[] = [];
   @Input() actionMode: string = 'inline';
   @Input() hasEditPermission: boolean = true;
+  @Input() hasViewPermission: boolean = true;
   @Input() hasDeletePermission: boolean = true;
   @Output() sortChange = new EventEmitter<SortEvent>();
   @Output() onEdit = new EventEmitter<any>();
-  @Output() onChange = new EventEmitter<any>();
   @Output() onStatusChange = new EventEmitter<any>();
   @Output() onView = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();

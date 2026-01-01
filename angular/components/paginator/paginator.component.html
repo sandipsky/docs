@@ -1,17 +1,22 @@
 <div class="paginator">
     <div class="page-items">
         <span class="page-text">Row per page: </span>
-        <button class="paginator-btn paginator-dropdown-btn" (click)="toggleDropdown()">
-            {{pageSize}} <svg fill="currentColor" width="20px" height="20px" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M14.83,11.29,10.59,7.05a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41L12.71,12,9.17,15.54a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l4.24-4.24A1,1,0,0,0,14.83,11.29Z" />
-            </svg>
-            <div class="pagination-dropdown-content" [class.active]="isOpen" (clickOutside)="closeDropdown()">
-                <a [class.active]="item == pageSize" (click)="onchangePageOption(item)"
-                    *ngFor="let item of pageSizeOptions">{{item}}</a>
+        <dropdown-menu>
+            <!-- Trigger -->
+            <button dropdown-display class="paginator-btn paginator-dropdown-btn">
+                {{ pageSize }}
+                <svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M14.83,11.29,10.59,7.05a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41L12.71,12,9.17,15.54a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.29,1,1,0,0,0,.71-.29l4.24-4.24A1,1,0,0,0,14.83,11.29Z" />
+                </svg>
+            </button>
+
+            <!-- Dropdown Items -->
+            <div dropdown-item *ngFor="let item of pageSizeOptions" [class.active]="item === pageSize"
+                (click)="onchangePageOption(item)">
+                {{ item }}
             </div>
-        </button>
+        </dropdown-menu>
     </div>
 
     <div class="arrow-buttons">

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-paginator',
@@ -6,8 +6,8 @@ import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from
   styleUrls: ['./paginator.component.scss'],
 })
 export class PaginatorComponent {
-  @Input() pageSizeOptions: number[] = [25, 50, 100];
-  @Input() pageSize: number = 25;
+  @Input() pageSizeOptions: number[] = [10, 25, 50, 100];
+  @Input() pageSize: number = 10;
   @Input() pageIndex: number = 0;
   @Input() length: number = 0;
 
@@ -15,16 +15,8 @@ export class PaginatorComponent {
 
   visiblePages: number[] = [];
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (!this.el.nativeElement.contains(event.target)) {
-      this.closeDropdown();
-    }
-  }
-
   isOpen: boolean = false
-
-  constructor(private el: ElementRef) { }
+  openTop = false;
 
   ngOnChanges() {
     this.updateVisiblePages();
@@ -82,14 +74,4 @@ export class PaginatorComponent {
   calculateTotalPages(): number {
     return this.length > 0 ? Math.ceil(this.length / this.pageSize) : 1;
   }
-
-  toggleDropdown() {
-    this.isOpen = !this.isOpen
-  }
-
-  closeDropdown() {
-    this.isOpen = false;
-  }
-
-
 }

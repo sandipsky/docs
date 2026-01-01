@@ -20,12 +20,10 @@
     display: flex;
     align-items: center;
     gap: 6px;
-
-
 }
 
 .page-text {
-    color: #07090F;
+    color: var(--text-primary-color, #07090f);
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
@@ -35,12 +33,12 @@
     }
 
     &.light {
-        color: #6B7280;
+        color: var(--text-quaternary-color, #6b7280);
     }
 }
 
 .paginator-btn {
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--separator-color, #e5e7eb);
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px;
     border-radius: 8px;
     padding: 6px;
@@ -54,64 +52,26 @@
     aspect-ratio: 1/1;
     cursor: pointer;
 
-    color: #07090F;
+    color: var(--text-primary-color, #07090f);
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
 
     &:hover {
-        background-color: #f4f4f5;
+        background-color: var(--bg-semi-light-color, #f3f4f6);
     }
 
     &.active {
-        background-color: #006AE4;
-        color: #F9FAFB;
+        background-color: var(--primary-color, #006ae4);
+        color: var(--text-white-color, #f9fafb);
     }
 
 
 
     &.disabled {
-        color: #a3a3a3;
+        color: var(--separator-alt-color, #d1d5db);
         background-color: transparent;
         cursor: default;
-    }
-}
-
-.pagination-dropdown-content {
-    visibility: hidden;
-    min-width: inherit;
-    opacity: 0;
-    transition: visibility 0.15s linear, opacity 0.15s linear;
-    position: absolute;
-    top: 110%;
-    left: 0;
-    box-shadow: 0 4px 10px #00000008, 0 0 2px #0000000f, 0 2px 6px #0000001f;
-    border-radius: 6px;
-    background-color: white;
-    width: auto;
-    padding: 6px 0px;
-    display: flex;
-    flex-direction: column;
-    z-index: 2;
-
-    &.active {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    a {
-        padding: 6px 14px;
-        color: #4b5563;
-        text-decoration: none;
-
-        &:hover {
-            background-color: #f3f4f6;
-        }
-
-        &.active {
-            background-color: rgba(59, 130, 246, 0.24);
-            color: #1d4ed8;
-        }
     }
 }
 

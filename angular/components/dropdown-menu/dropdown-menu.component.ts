@@ -1,33 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  ViewChild
+} from '@angular/core';
 
 @Component({
   selector: 'dropdown-menu',
-  templateUrl: './dropdown-menu.component.html',
-  styleUrls: ['./dropdown-menu.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIconModule]
+  imports: [CommonModule],
+  templateUrl: './dropdown-menu.component.html',
+  styleUrls: ['./dropdown-menu.component.scss']
 })
 export class DropdownMenuComponent {
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (!this.el.nativeElement.contains(event.target)) {
-      this.closeDropdown();
+
+  @Input() mode: 'left' | 'right' = 'left';
+  @Input() closeOnItemClick = true;
+  @Input() modalMode = false;
+  @ViewChild('content') content!: ElementRef<HTMLElement>;
+
+  isOpen = false;
+  openTop = false;
+
+  constructor(private host: ElementRef) { }
+
+  toggle(): void {
+    this.isOpen = !this.isOpen;
+
+    if (this.isOpen) {
+      setTimeout(() => this.calculatePosition());
     }
   }
 
-  isOpen: boolean = false
+  private calculatePosition(): void {
+    if (!this.content) return;
 
-  constructor(private el: ElementRef) { }
+    const rect = this.content.nativeElement.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
 
-  toggleDropdown() {
-    this.isOpen = !this.isOpen
+    this.openTop = spaceBelow < 120;
   }
 
-  closeDropdown() {
-    console.log(true);
+  close(): void {
     this.isOpen = false;
+    this.openTop = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onOutsideClick(event: MouseEvent): void {
+    if (!this.host.nativeElement.contains(event.target)) {
+      this.close();
+    }
   }
 }

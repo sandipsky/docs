@@ -1,5 +1,0 @@
-npm i @ng-select/ng-select np-datepicker-angular ngx-toastr
-
-npm install pdfmake --save
-
-npm install xlsx-js-style

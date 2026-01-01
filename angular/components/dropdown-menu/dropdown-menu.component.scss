@@ -1,58 +1,69 @@
 .dropdown-menu {
     position: relative;
     cursor: pointer;
+    border-radius: 6px;
+
+    &.dropdown-active {
+        background-color: var(--separator-color, #e5e7eb);
+    }
+
+    &.right {
+        .dropdown-content {
+            right: auto;
+            left: 10%;
+        }
+    }
 }
 
-
 .dropdown-content {
-    visibility: hidden;
-    min-width: inherit;
-    opacity: 0;
-    transition: visibility 0.15s linear, opacity 0.15s linear;
     position: absolute;
     top: 125%;
     right: 10%;
-    box-shadow: 0 4px 10px #00000008, 0 0 2px #0000000f, 0 2px 6px #0000001f;
-    border-radius: 6px;
-    background-color: white;
-    width: auto;
-    padding: 6px 0px;
+    z-index: 3;
+
     display: flex;
     flex-direction: column;
 
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--separator-color, #e5e7eb);
+    background: var(--bg-lightest-color, #fefefe);
+    box-shadow: 3px 9px 32px rgba(0, 0, 0, 0.1);
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+
     &.active {
-        visibility: visible;
         opacity: 1;
+        visibility: visible;
     }
 
-    a {
-        padding: 6px 14px;
-        color: #4b5563;
-        text-decoration: none;
+    &.open-top {
+        top: auto;
+        bottom: 125%;
+    }
 
-        &:hover {
-            background-color: #f3f4f6;
-        }
-
-        &.active {
-            background-color: rgba(59, 130, 246, 0.24);
-            color: #1d4ed8;
-        }
+    &.nopadding {
+        padding: 0;
     }
 }
 
-::ng-deep .dropdown-content a {
-    padding: 6px 14px;
-    color: #4b5563;
-    text-decoration: none;
+:host ::ng-deep [dropdown-item] {
+    padding: 8px;
+    border-radius: 8px;
     display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    cursor: pointer;
 
     &:hover {
-        background-color: #f3f4f6;
+        background-color: var(--separator-alt-color, #d1d5db);
     }
 
     &.active {
-        background-color: rgba(59, 130, 246, 0.24);
-        color: #1d4ed8;
+        background-color: var(--primary-alt-color, #e6f0fc);
+        color: var(--primary-color, #006ae4);
     }
 }
