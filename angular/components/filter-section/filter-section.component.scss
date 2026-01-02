@@ -152,6 +152,8 @@
     .filter-body {
         align-self: stretch;
         padding: 0 12px;
+        max-height: 300px;
+        overflow: auto;
 
         .form-group {
             margin-bottom: 12px;

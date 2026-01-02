@@ -1,10 +1,10 @@
 .dropdown-menu {
     position: relative;
-    cursor: pointer;
-    border-radius: 6px;
 
-    &.dropdown-active {
-        background-color: var(--separator-color, #e5e7eb);
+    &.active {
+        ::ng-deep [dropdown-display] {
+            background-color: var(--separator-color, #e5e7eb);
+        }
     }
 
     &.right {
@@ -66,4 +66,8 @@
         background-color: var(--primary-alt-color, #e6f0fc);
         color: var(--primary-color, #006ae4);
     }
+}
+
+:host ::ng-deep [dropdown-display] {
+    cursor: pointer;
 }

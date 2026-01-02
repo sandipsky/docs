@@ -18,7 +18,7 @@ export class DropdownMenuComponent {
 
   @Input() mode: 'left' | 'right' = 'left';
   @Input() closeOnItemClick = true;
-  @Input() modalMode = false;
+  @Input() contentMode = false;
   @ViewChild('content') content!: ElementRef<HTMLElement>;
 
   isOpen = false;
@@ -50,7 +50,9 @@ export class DropdownMenuComponent {
 
   @HostListener('document:click', ['$event'])
   onOutsideClick(event: MouseEvent): void {
-    if (!this.host.nativeElement.contains(event.target)) {
+    const target = event.target as HTMLElement;
+    if (!this.host.nativeElement.contains(event.target) &&
+      !target.closest('.ng-dropdown-panel')) {
       this.close();
     }
   }
