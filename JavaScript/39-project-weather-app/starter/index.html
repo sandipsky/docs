@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Now</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- A module script. It waits for the page to load, like `defer` does. -->
+  <!-- It needs a local server: right-click this file and choose "Open with Live Server". -->
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>Weather Now</h1>
+      <button id="unit-toggle" class="unit-toggle" type="button">Switch to °F</button>
+    </header>
+
+    <!-- Search: type a city, pick a suggestion or press Enter -->
+    <form id="search-form" class="search" autocomplete="off">
+      <label for="city-input" class="visually-hidden">City name</label>
+      <input id="city-input" type="search" placeholder="Search for a city..." required>
+      <button type="submit">Search</button>
+      <!-- Suggestions go here, one per city:
+           <li><button type="button" class="suggestion">London, England, United Kingdom</button></li> -->
+      <ul id="suggestions" class="suggestions" hidden></ul>
+    </form>
+
+    <!-- Loading and error messages. Add the class "error" for errors. -->
+    <p id="status" class="status" hidden></p>
+
+    <!-- The weather right now -->
+    <section id="current" class="card current" hidden>
+      <h2 id="place-name" class="place-name"></h2>
+      <div class="current-main">
+        <span id="current-emoji" class="current-emoji"></span>
+        <span id="current-temp" class="current-temp"></span>
+      </div>
+      <p id="current-description" class="current-description"></p>
+      <ul class="details">
+        <li>Feels like <strong id="feels-like"></strong></li>
+        <li>Humidity <strong id="humidity"></strong></li>
+        <li>Wind <strong id="wind"></strong></li>
+      </ul>
+    </section>
+
+    <!-- The next 7 days. One <li> per day:
+         <li class="forecast-day">
+           <span class="day-name">Today</span>
+           <span class="day-emoji">☀️</span>
+           <span class="day-rain">💧 10%</span>
+           <span class="day-temps"><span class="max">22°</span> <span class="min">13°</span></span>
+         </li> -->
+    <section id="forecast" class="card forecast" hidden>
+      <h2>7-day forecast</h2>
+      <ol id="forecast-list" class="forecast-list"></ol>
+    </section>
+
+    <footer class="app-footer">
+      Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>
+    </footer>
+  </div>
+</body>
+</html>

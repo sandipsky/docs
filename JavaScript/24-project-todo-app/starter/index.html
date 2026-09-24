@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <h1 class="app-title">My To-Do List</h1>
+
+      <form id="todo-form" class="todo-form">
+        <label for="todo-input">New task</label>
+        <div class="todo-form-row">
+          <input id="todo-input" name="task" type="text" placeholder="e.g. Buy milk">
+          <button type="submit">Add</button>
+        </div>
+      </form>
+
+      <div id="filters" class="filters">
+        <button type="button" class="filter-button active" data-filter="all">All</button>
+        <button type="button" class="filter-button" data-filter="active">Active</button>
+        <button type="button" class="filter-button" data-filter="completed">Completed</button>
+      </div>
+
+      <ul id="todo-list" class="todo-list"></ul>
+
+      <footer class="todo-footer">
+        <span id="todo-count">0 tasks left</span>
+        <button type="button" id="clear-completed" class="clear-button">Clear completed</button>
+      </footer>
+    </main>
+  </body>
+</html>
