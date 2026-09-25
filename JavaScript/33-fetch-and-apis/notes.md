@@ -331,6 +331,50 @@ const response = await fetch("https://jsonplaceholder.typicode.com/posts/1", { m
 console.log(response.status); // prints: 200
 ```
 
+### Sending your own headers
+
+`Content-Type` isn't the only header you can send. The `headers` object can hold any headers you like, with any method. Some common ones:
+
+| Header | What it tells the server |
+|---|---|
+| `Authorization` | Who you are, like `"Bearer abc123"` (a login token) |
+| `Accept` | Which format you'd like back, like `"application/json"` |
+| `Accept-Language` | Which language you'd like, like `"ne"` or `"en"` |
+| `X-Something` | Anything your own API needs. Custom headers often start with `X-`. |
+
+To see headers in action, use **httpbin.org**, a free test service. Its `/headers` address sends back the headers it received, like a mirror:
+
+```js
+const response = await fetch("https://httpbin.org/headers", {
+  headers: {
+    Authorization: "Bearer my-token-123",
+    "X-App-Version": "1.4.0",
+  },
+});
+
+const data = await response.json();
+console.log(data.headers.Authorization);   // prints: Bearer my-token-123
+console.log(data.headers["X-App-Version"]); // prints: 1.4.0
+```
+
+Header names with a `-` need quotes in the object, just like any object key with a dash ([chapter 11](../11-objects/notes.md)). Header names don't care about capital letters: `authorization` and `Authorization` are the same header.
+
+> **Watch out:** it's fine to send a token the server gave the logged-in user. But never type a *secret* key straight into front-end code: anyone can read it (see "API keys" below, and [chapter 51](../51-security-basics/notes.md)).
+
+### Reading the server's headers
+
+Responses have headers too, and `response.headers.get()` reads one. Here, the server says what kind of data it sent:
+
+```js
+const response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
+
+console.log(response.headers.get("Content-Type")); // prints: application/json; charset=utf-8
+console.log(response.headers.get("X-Not-There"));  // prints: null
+console.log(response.headers.has("content-type")); // prints: true
+```
+
+`get` returns `null` when the header isn't there. Real uses: checking that the response really is JSON before calling `.json()`, or reading headers some APIs use to say how many requests you have left.
+
 ### Loading and error states on a web page
 
 On a real page, a request can take a second or two, and sometimes it fails. If nothing happens on the screen meanwhile, people think the page is broken and click again and again. A good page shows three **states**:
@@ -370,6 +414,22 @@ Opening the page by double-clicking `index.html` works fine here, because these 
 **CORS** (Cross-Origin Resource Sharing) is a browser safety rule: a page may only read a response from *another* website if that website allows it, with a response header called `Access-Control-Allow-Origin`. JSONPlaceholder and Open-Meteo allow everyone, but if your console ever says a request was "blocked by CORS policy", the fix is on the server's side, not in your `fetch` code.
 
 (Node doesn't apply this rule. That's why your Node scripts never run into it.)
+
+### Headers and the browser's rules
+
+The browser adds two rules about request headers. Node has neither.
+
+**1. Some headers are off-limits.** The browser sets headers like `Cookie`, `Host`, `Origin` and `Referer` itself, so your page can't fake them. If you try, the browser ignores your value without an error.
+
+**2. Custom headers to another website need permission first.** A simple request, like a plain GET, goes straight out. But when you send a custom header like `X-App-Version` (or `Authorization`) to another website, the browser first sends a small "may I?" request, called a **preflight**. It's like phoning a restaurant to ask whether they take card before you go:
+
+```
+Browser  →  Server:  "May I send a request with the header X-App-Version?"   (preflight)
+Server   →  Browser: "Yes, that header is allowed."
+Browser  →  Server:  the real request
+```
+
+If the server doesn't say yes, the real request never happens, and the console shows a CORS error. You'll see the preflight in the DevTools **Network** tab as an extra request with the method `OPTIONS`. As with all CORS problems, the fix is on the server: it has to allow your header.
 
 ### Cancelling a request: `AbortController`
 
@@ -529,6 +589,7 @@ A response's body can only be read once. After that, it's used up. Fix: read it 
 - `fetch` only rejects when there's no answer at all. A 404 or 500 still fulfills, so always check `response.ok`.
 - Build URLs with `URL` and `URLSearchParams`, so every value is encoded safely.
 - To send data, give `fetch` a `method`, a `Content-Type: application/json` header, and a `JSON.stringify`-ed `body`.
+- The `headers` option sends any headers you like, and `response.headers.get(name)` reads the server's. In the browser, some headers are off-limits, and custom headers to other sites trigger a CORS preflight.
 - On a page, show loading and error states. Cancel with `AbortController` or `AbortSignal.timeout`, and retry with backoff only when it can help.
 - Never put secret API keys in front-end code.
 

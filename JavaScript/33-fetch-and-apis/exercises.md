@@ -113,6 +113,21 @@ The body has to be text, so turn the object into JSON with `JSON.stringify` firs
 
 </details>
 
+**Bonus: custom headers.** Real book club sites need to know *who* is posting. Send a GET request to `https://httpbin.org/headers` with two headers: `Authorization` set to `Bearer member-token-77`, and a custom `X-Club-Name` set to `Sunday Readers`. The server mirrors back what it received. Print both headers from its answer, and the response's own `Content-Type` header:
+
+```
+Authorization: Bearer member-token-77
+X-Club-Name: Sunday Readers
+Server sent: application/json
+```
+
+<details>
+<summary>Hint 3</summary>
+
+The mirrored headers are in `data.headers` of the JSON answer. The response's own header comes from `response.headers.get("Content-Type")`.
+
+</details>
+
 ---
 
 ## Exercise 4 (Medium): Weather for any city

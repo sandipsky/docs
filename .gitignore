@@ -1,0 +1,8 @@
+# Installed packages: re-create them with `npm install`
+node_modules/
+
+# Secret settings (see JavaScript chapter 51)
+.env
+
+# Build output from Vite and tsc
+dist/

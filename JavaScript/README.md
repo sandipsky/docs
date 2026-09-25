@@ -93,4 +93,4 @@ There are 52 chapters in four levels. They go in order, and each one builds on t
 
 ---
 
-**After this:** TypeScript, React, Node.js frameworks (like Express), and data structures & algorithms are great next steps. Each one will get its own folder.
+**After this:** continue with [TypeScript](../TypeScript/README.md). React, Node.js frameworks (like Express), and data structures & algorithms are great next steps too, and each will get its own folder.
