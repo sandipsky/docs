@@ -1,0 +1,132 @@
+/* Look of the html and pdf versions. build_doc.py puts this inside the page. */
+
+:root {
+  --ink: #1f2328;
+  --muted: #59636e;
+  --heading: #0b3d6e;
+  --link: #0b5cad;
+  --line: #d1d9e0;
+  --code-bg: #f3f5f7;
+  --tip-bg: #f2f7fc;
+  --hint-bg: #fffbeb;
+  --hint-line: #e8d9a8;
+  --toc-width: 19rem;
+  color-scheme: light;
+}
+
+html { font-size: 17px; }
+
+body {
+  margin: 0 auto;
+  max-width: 46rem;
+  padding: 2rem 1rem 5rem;
+  background: #fff;
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+  overflow-wrap: break-word;
+}
+
+/* Title and contents */
+#title-block-header { text-align: center; margin: 3rem 0 2.5rem; }
+#title-block-header .title { font-size: 2.4rem; border: 0; margin: 0 0 .4rem; }
+#title-block-header .subtitle { font-size: 1.2rem; color: var(--muted); margin: 0; }
+#title-block-header .date { color: var(--muted); margin-top: .4rem; }
+
+nav#TOC { border: 1px solid var(--line); border-radius: 8px; padding: .5rem 1.25rem 1rem; margin-bottom: 3rem; }
+nav#TOC h2 { margin-top: .75rem; font-size: 1.3rem; }
+nav#TOC ul { list-style: none; padding-left: 0; margin: 0; }
+nav#TOC ul ul { padding-left: 1rem; margin-bottom: .6rem; }
+nav#TOC > ul > li > a { font-weight: 600; }
+nav#TOC li { margin: .15rem 0; }
+nav#TOC a { text-decoration: none; }
+nav#TOC a:hover { text-decoration: underline; }
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 { color: var(--heading); line-height: 1.25; margin: 2.2em 0 .6em; break-after: avoid; }
+h1 { font-size: 2rem; border-bottom: 2px solid var(--line); padding-bottom: .3em; }
+h2 { font-size: 1.65rem; }
+h3 { font-size: 1.3rem; }
+h4 { font-size: 1.1rem; color: var(--ink); }
+h5, h6 { font-size: 1rem; color: var(--ink); }
+h1.part { font-size: 2.3rem; margin-top: 3em; }
+.chapter { border-bottom: 2px solid var(--line); padding-bottom: .3em; }
+
+a { color: var(--link); }
+hr { border: 0; border-top: 1px solid var(--line); margin: 2.2em 0; }
+img { max-width: 100%; }
+
+/* Code */
+code {
+  font-family: Consolas, "Cascadia Mono", Menlo, "Liberation Mono", monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  padding: .1em .3em;
+  border-radius: 4px;
+}
+pre, div.sourceCode {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+pre { padding: .8rem 1rem; margin: 1em 0; overflow-x: auto; line-height: 1.45; font-size: .9rem; }
+div.sourceCode pre { border: 0; margin: 0; background: none; }
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* Tips, tables and hints */
+blockquote {
+  margin: 1.2em 0;
+  padding: .6em 1em;
+  border-left: 4px solid var(--link);
+  background: var(--tip-bg);
+  border-radius: 0 6px 6px 0;
+}
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
+
+table { border-collapse: collapse; margin: 1.2em 0; display: block; max-width: 100%; overflow-x: auto; }
+th, td { border: 1px solid var(--line); padding: .4em .7em; text-align: left; vertical-align: top; }
+th { background: var(--code-bg); }
+
+details {
+  border: 1px solid var(--hint-line);
+  background: var(--hint-bg);
+  border-radius: 6px;
+  padding: .5em .9em;
+  margin: .8em 0;
+}
+details[open] { padding-bottom: .2em; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Wide screens: contents in a sidebar */
+@media screen and (min-width: 72rem) {
+  nav#TOC {
+    position: fixed;
+    top: 0; bottom: 0; left: 0;
+    width: var(--toc-width);
+    overflow-y: auto;
+    margin: 0;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    font-size: .9rem;
+    background: #fafbfc;
+  }
+  body { margin-left: calc(var(--toc-width) + max(2rem, (100vw - var(--toc-width) - 46rem) / 2)); }
+}
+
+/* Printing and PDF */
+@page {
+  margin: 18mm 16mm;
+  @bottom-center { content: counter(page); font: 9pt "Segoe UI", system-ui, sans-serif; color: #59636e; }
+}
+@page :first { @bottom-center { content: none; } }
+@media print {
+  html { font-size: 10.5pt; }
+  body { max-width: none; padding: 0; }
+  #title-block-header { margin-top: 35vh; break-after: page; }
+  nav#TOC { border: 0; padding: 0; break-after: page; }
+  .page-break { break-before: page; margin-top: 0; }
+  pre, blockquote, details, tr { break-inside: avoid; }
+  pre code, pre > code.sourceCode { white-space: pre-wrap; }
+}
