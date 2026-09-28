@@ -1,0 +1,650 @@
+/*
+  Paper & Ink — styles
+  ====================
+  This file is finished. You shouldn't need to change it.
+  The class names it expects are listed in starter/README.md.
+*/
+
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --text: #22201d;
+  --text-muted: #7a736c;
+  --border: #e4ded6;
+  --accent: #1f6f5c;
+  --accent-text: #ffffff;
+  --danger: #b3261e;
+  --warning: #9a6700;
+  --shadow: 0 1px 3px rgba(34, 32, 29, 0.07), 0 6px 16px rgba(34, 32, 29, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  min-height: 100vh;
+}
+
+/* -------------------------------------------------------------- header */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.shop-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.shop-name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.main-nav {
+  display: flex;
+  gap: 18px;
+  margin-left: auto;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover {
+  color: var(--text);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.cart-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.cart-indicator:hover {
+  filter: brightness(1.08);
+}
+
+/* ---------------------------------------------------------------- page */
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.page-title {
+  margin: 0 0 20px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.status-message {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.status-message.error {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.result-count {
+  margin: 16px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------- filters */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.search-input,
+.filter-select {
+  padding: 10px 13px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-input:focus-visible,
+.filter-select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------- grid */
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 22px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/*
+  A book card is a CONTAINER, not a link or a button — it holds a link
+  (open the book) and a button (add to cart) as siblings. Never nest
+  interactive elements inside each other.
+*/
+.book-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-2px);
+}
+
+.book-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.book-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--border);
+}
+
+.book-title {
+  margin: 12px 14px 2px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.book-author {
+  margin: 0 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.book-price {
+  margin: 8px 14px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.book-card .btn {
+  margin: 12px 14px 14px;
+}
+
+.book-genre {
+  display: inline-block;
+  margin: 8px 14px 0;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* --------------------------------------------------------- book detail */
+
+.book-detail {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .book-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+.book-detail .book-cover {
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.book-detail-title {
+  margin: 0 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.book-detail-author {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 17px;
+}
+
+.book-detail-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 16px 0;
+}
+
+.book-description {
+  margin: 16px 0 24px;
+  max-width: 55ch;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 24px;
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- cart */
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.cart-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-row:last-child {
+  border-bottom: none;
+}
+
+.cart-row-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.cart-row-price,
+.cart-row-total {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.cart-row-total {
+  font-weight: 700;
+  min-width: 70px;
+  text-align: right;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-control button {
+  width: 28px;
+  height: 28px;
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quantity-control button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.quantity-control button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quantity-value {
+  min-width: 22px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.remove-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.remove-button:hover {
+  color: var(--danger);
+  background: rgba(179, 38, 30, 0.08);
+}
+
+.cart-summary {
+  max-width: 340px;
+  margin-left: auto;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-row.total {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.summary-row.discount {
+  color: var(--accent);
+}
+
+.promo-form {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.promo-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 11px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.promo-message {
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+.promo-message.error {
+  color: var(--danger);
+}
+
+.promo-message.success {
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- button */
+
+.btn {
+  display: inline-block;
+  padding: 9px 18px;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  color: var(--accent-text);
+  background: var(--accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn-secondary {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--text-muted);
+}
+
+.btn-ghost {
+  color: var(--text-muted);
+  background: transparent;
+  text-decoration: underline;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--danger);
+}
+
+.btn-small {
+  padding: 5px 12px;
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------------- forms */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+  max-width: 420px;
+}
+
+.form-field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 10px 13px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.form-field input:focus-visible,
+.form-field textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field-error {
+  font-size: 13px;
+  color: var(--danger);
+}
+
+/* ------------------------------------------------------------ fallback */
+
+.error-fallback {
+  padding: 28px;
+  text-align: center;
+  background: #fdf3f2;
+  border: 1px solid #f3d3d0;
+  border-radius: 10px;
+  color: var(--danger);
+}
+
+.error-fallback p {
+  margin: 0 0 14px;
+}
+
+/* -------------------------------------------- styles for the stretch goals */
+
+.stock-warning {
+  font-size: 13px;
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.out-of-stock {
+  font-size: 13px;
+  color: var(--danger);
+  font-weight: 600;
+  margin: 8px 14px 0;
+}
+
+.save-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+.save-button.active {
+  color: var(--danger);
+}
+
+.order-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.account-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.account-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, #f2ede7 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  border-radius: 10px;
+}
+
+.skeleton-card {
+  aspect-ratio: 2 / 3;
+}
+
+@keyframes skeleton-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ------------------------------------------------------------ utilities */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
