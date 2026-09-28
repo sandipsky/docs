@@ -47,4 +47,4 @@ This folder only covers what TypeScript **adds**. Everything else (variables, lo
 
 ---
 
-**After this:** React with TypeScript is the most common next step.
+**After this:** [React](../React/README.md) is the most common next step, and it uses TypeScript from its very first chapter.
