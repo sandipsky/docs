@@ -1,0 +1,85 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Write the About page",
+      "description": "Two short paragraphs on how the bakery started. Ask Priya for the old shop photos.",
+      "status": "doing",
+      "priority": "medium",
+      "dueDate": "2026-10-01",
+      "createdAt": "2026-09-14T09:20:00.000Z"
+    },
+    {
+      "id": "2",
+      "title": "Choose a domain name",
+      "description": "",
+      "status": "done",
+      "priority": "high",
+      "dueDate": "2026-09-18",
+      "createdAt": "2026-09-08T10:05:00.000Z"
+    },
+    {
+      "id": "3",
+      "title": "Photograph the autumn menu",
+      "description": "Natural light, mornings only. Twelve dishes, plus the new pumpkin loaf.",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-09-28",
+      "createdAt": "2026-09-15T14:30:00.000Z"
+    },
+    {
+      "id": "4",
+      "title": "Set up the online order form",
+      "description": "Collection only for the launch. Delivery can wait until November.",
+      "status": "todo",
+      "priority": "high",
+      "dueDate": "2026-09-30",
+      "createdAt": "2026-09-16T11:00:00.000Z"
+    },
+    {
+      "id": "5",
+      "title": "Fix the menu page on phones",
+      "description": "Prices wrap onto two lines on screens narrower than 400px.",
+      "status": "doing",
+      "priority": "medium",
+      "dueDate": "2026-09-29",
+      "createdAt": "2026-09-21T16:45:00.000Z"
+    },
+    {
+      "id": "6",
+      "title": "Add opening hours to the footer",
+      "description": "",
+      "status": "todo",
+      "priority": "low",
+      "dueDate": null,
+      "createdAt": "2026-09-22T08:10:00.000Z"
+    },
+    {
+      "id": "7",
+      "title": "Pick a colour scheme",
+      "description": "Warm browns and cream. Check that text on cream has enough contrast.",
+      "status": "done",
+      "priority": "medium",
+      "dueDate": "2026-09-20",
+      "createdAt": "2026-09-09T13:25:00.000Z"
+    },
+    {
+      "id": "8",
+      "title": "Write the launch newsletter",
+      "description": "For the 340 people on the mailing list. Include a 10% off code for the first week.",
+      "status": "todo",
+      "priority": "medium",
+      "dueDate": "2026-10-14",
+      "createdAt": "2026-09-24T10:40:00.000Z"
+    },
+    {
+      "id": "9",
+      "title": "Test the site on an old laptop",
+      "description": "Borrow Sam's 2017 laptop. The home page should load in under 3 seconds.",
+      "status": "doing",
+      "priority": "low",
+      "dueDate": "2026-10-06",
+      "createdAt": "2026-09-25T15:15:00.000Z"
+    }
+  ]
+}

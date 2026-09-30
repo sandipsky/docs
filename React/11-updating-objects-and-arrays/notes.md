@@ -263,7 +263,7 @@ setState({
 Nobody enjoys reading that, let alone writing it. Two honest fixes:
 
 - **Flatten your state.** Often nesting was arbitrary, not necessary. A `taskAssigneeName` field next to `taskText`, instead of `task.assignee.name`, might genuinely be simpler for what your app does.
-- **Reach for a library.** [Immer](https://immerjs.github.io/immer/) is a popular one: you write code that *looks* like mutation, and it produces the correctly-copied result behind the scenes. It's outside this course, but it's worth knowing the name for when your state gets genuinely gnarly. Most apps never need it.
+- **Reach for a library.** [Immer](https://immerjs.github.io/immer/) is a popular one: you write code that *looks* like mutation, and it produces the correctly-copied result behind the scenes. You'll meet it inside Redux Toolkit in [chapter 35](../35-redux-toolkit/notes.md). Until then, it's worth knowing the name for when your state gets genuinely gnarly. Most apps never need it on its own.
 
 Try flattening first. It's usually the better fix, and it costs nothing to learn.
 
