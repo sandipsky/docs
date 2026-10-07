@@ -1,0 +1,10 @@
+# Netlify settings for the learning docs website.
+# Netlify reads this file when the repository is connected to a site.
+# Full instructions: website/README.md
+
+[build]
+  command = "cd website && npm ci && npm run build"
+  publish = "website/dist"
+
+[build.environment]
+  NODE_VERSION = "22"

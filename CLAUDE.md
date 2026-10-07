@@ -28,6 +28,14 @@ My files can be `.md`, `.txt`, `.docx`, or `.pdf`. When I add my own files, read
 When you create new files, use `.md` unless I ask for another format.
 Don't rename or move my folders and files without asking.
 
+### The `website/` folder is not a subject
+
+`website/` holds a small local web app that shows all these notes like a documentation site
+(see `website/README.md`). Start it with `website/start.cmd` or `cd website && npm start`, then open <http://localhost:3030>.
+It reads the folders directly, so new chapters show up without any extra step, as long as they follow the layout above
+(numbered chapter folders, `notes.md` and `exercises.md`, and a checkbox line in the subject `README.md`).
+`cd website && npm run build` writes a static copy to `website/dist/` for publishing on Netlify; `netlify.toml` at the root holds the settings.
+
 ## How to write for me
 
 - **Plain, human English.** Write like you're explaining to a friend. Use short sentences and everyday words.

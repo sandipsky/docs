@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Docs</title>
+  <link rel="icon" href="/_app/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/_app/app.css">
+  <script>
+    // Apply the saved theme before anything is drawn, so there is no flash. Light is the default.
+    // Adding ?theme=dark or ?theme=light to the address also switches (and remembers) the theme.
+    try {
+      var wanted = new URLSearchParams(location.search).get('theme');
+      if (wanted === 'dark' || wanted === 'light') localStorage.setItem('theme', wanted);
+      if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <a class="brand" href="/">
+          <span class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </span>
+          <span>Learning Docs</span>
+        </a>
+        <button class="icon-btn" id="theme-toggle" type="button" title="Switch theme" aria-label="Switch between light and dark theme"></button>
+      </div>
+
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="search" placeholder="Search the notes" autocomplete="off" spellcheck="false" aria-label="Search">
+        <kbd>Ctrl K</kbd>
+      </div>
+
+      <div class="sidebar-scroll">
+        <nav class="tree" id="tree" aria-label="Subjects and chapters"></nav>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+    </aside>
+
+    <div class="backdrop" id="backdrop"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="menu-btn" type="button" aria-label="Open the menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="topbar-title" id="topbar-title">Learning Docs</div>
+      </header>
+
+      <div class="main-inner">
+        <article class="content" id="content"></article>
+        <aside class="toc" id="toc" hidden></aside>
+      </div>
+    </div>
+  </div>
+
+  <script src="/_app/app.js"></script>
+</body>
+</html>
