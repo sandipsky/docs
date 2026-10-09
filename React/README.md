@@ -2,7 +2,7 @@
 
 React is a JavaScript **library** (code someone else wrote that you can use in your own projects) for building user interfaces. You build a page from small, reusable pieces called **components**, like snapping LEGO bricks together. When your data changes, React updates the page for you.
 
-This course takes you from your first component to building and deploying full apps with the tools real teams use. There are 41 chapters in five levels. They go in order, and each one builds on the ones before it.
+This course takes you from your first component to building and deploying full apps with the tools real teams use. There are 41 chapters in five levels, plus a reference chapter (00) on setting up a real project. The numbered chapters go in order, and each one builds on the ones before it.
 
 **Before you start:** finish at least Levels 1 to 3 of the [JavaScript course](../JavaScript/README.md), and the whole [TypeScript course](../TypeScript/README.md). React uses a lot of modern JavaScript, like array methods, destructuring, modules, and `fetch`. And this course is written in TypeScript from the very first chapter.
 
@@ -25,6 +25,12 @@ This course takes you from your first component to building and deploying full a
 **Projects:** five chapters are projects where you build something real. Some come with a `starter/` folder, so you can focus on the React parts.
 
 ---
+
+## Level 0: Project Setup
+
+*A reference, not a lesson: skim it now, follow it when you start a real project (chapters 37 and 41, or your own). It uses the Level 4 libraries.*
+
+- [ ] [00 Project Setup](00-project-setup/notes.md): setting up a real React + TypeScript project by hand, step by step: Vite, the toolbox libraries, environment variables, a feature folder structure, file-based routes, and a mock API
 
 ## Level 1: The Basics
 
