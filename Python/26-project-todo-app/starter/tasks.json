@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Buy milk",
+    "done": false,
+    "created": "2026-10-05",
+    "due": "2026-10-08"
+  },
+  {
+    "id": 2,
+    "title": "Renew passport",
+    "done": false,
+    "created": "2026-10-05",
+    "due": "2029-03-01"
+  },
+  {
+    "id": 3,
+    "title": "Call grandma",
+    "done": false,
+    "created": "2026-10-06",
+    "due": null
+  },
+  {
+    "id": 4,
+    "title": "Water the plants",
+    "done": true,
+    "created": "2026-10-06",
+    "due": "2026-10-07"
+  }
+]
