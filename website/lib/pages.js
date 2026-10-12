@@ -15,8 +15,9 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB is plenty for a lesson
 // Files sent to the browser as they are (pictures, PDFs, downloads).
 const ASSET_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico', '.pdf', '.docx', '.xlsx', '.pptx', '.zip', '.mp4', '.mp3', '.woff2']);
 
-// Parts of the folder that must never be shown.
-const HIDDEN = /(^|\/)(\.git|\.claude|node_modules|website|\.env[^/]*)(\/|$)/;
+// Parts of the folder that must never be shown. Case doesn't matter, because on
+// Windows "claude.md" and "CLAUDE.md" are the same file.
+const HIDDEN = /(^|\/)(\.git|\.claude|node_modules|website|\.env[^/]*|CLAUDE\.md)(\/|$)/i;
 
 // Turns a URL path like "/JavaScript/02-variables/notes.md" into a safe path
 // inside the learning folder. Returns null if it points somewhere it shouldn't.

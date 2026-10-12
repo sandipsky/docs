@@ -18,6 +18,8 @@ const path = require('path');
 
 // Folders that are never part of the lessons.
 const SKIP_DIRS = new Set(['.git', '.claude', 'node_modules', 'website', 'dist', 'build']);
+// Files that are never part of the lessons (instructions for Claude, not for the reader).
+const SKIP_FILES = new Set(['claude.md']);
 const DOC_EXTS = new Set(['.md', '.txt']);
 const DOWNLOAD_EXTS = new Set(['.pdf', '.docx']);
 
@@ -25,6 +27,7 @@ function readDir(dir) {
   try {
     return fs
       .readdirSync(dir, { withFileTypes: true })
+      .filter((e) => !(e.isFile() && SKIP_FILES.has(e.name.toLowerCase())))
       .sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
   } catch {
     return [];
