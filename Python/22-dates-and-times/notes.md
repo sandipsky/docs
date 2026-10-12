@@ -555,7 +555,7 @@ elapsed = time.time() - start
 print(f"That took {elapsed:.2f} seconds")  # prints something like: That took 0.55 seconds
 ```
 
-Your number will be different. It depends on your computer, and changes a little every run. (For very precise timing, `time.perf_counter()` works the same way and is more accurate. You'll use it in [chapter 49](../49-performance/notes.md).)
+Your number will be different. It depends on your computer, and changes a little every run. (For very precise timing, `time.perf_counter()` works the same way and is more accurate. You'll use it in [chapter 32](../32-decorators/notes.md), and again in [chapter 49](../49-performance/notes.md).)
 
 And `time.sleep(seconds)` pauses the program. It also takes decimals, so `time.sleep(0.5)` waits half a second:
 

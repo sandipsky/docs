@@ -1,0 +1,135 @@
+{
+  "books": [
+    {
+      "id": "B001",
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "genre": "scifi"
+    },
+    {
+      "id": "B002",
+      "title": "Matilda",
+      "author": "Roald Dahl",
+      "genre": "children"
+    },
+    {
+      "id": "B003",
+      "title": "Holes",
+      "author": "Louis Sachar",
+      "genre": "children"
+    },
+    {
+      "id": "B004",
+      "title": "Coraline",
+      "author": "Neil Gaiman",
+      "genre": "fantasy"
+    },
+    {
+      "id": "B005",
+      "title": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "genre": "fantasy"
+    },
+    {
+      "id": "B006",
+      "title": "Emma",
+      "author": "Jane Austen",
+      "genre": "classic"
+    },
+    {
+      "id": "B007",
+      "title": "Wonder",
+      "author": "R.J. Palacio",
+      "genre": "children"
+    },
+    {
+      "id": "B008",
+      "title": "The Big Sleep",
+      "author": "Raymond Chandler",
+      "genre": "mystery"
+    }
+  ],
+  "members": [
+    {
+      "id": "M001",
+      "name": "Sandip"
+    },
+    {
+      "id": "M002",
+      "name": "Maya"
+    },
+    {
+      "id": "M003",
+      "name": "Leo"
+    },
+    {
+      "id": "M004",
+      "name": "Zoe"
+    }
+  ],
+  "loans": [
+    {
+      "book_id": "B002",
+      "member_id": "M001",
+      "borrowed": "2026-08-03",
+      "due": "2026-08-17",
+      "returned": "2026-08-15"
+    },
+    {
+      "book_id": "B007",
+      "member_id": "M004",
+      "borrowed": "2026-08-20",
+      "due": "2026-09-03",
+      "returned": "2026-09-05"
+    },
+    {
+      "book_id": "B001",
+      "member_id": "M004",
+      "borrowed": "2026-09-01",
+      "due": "2026-09-15",
+      "returned": "2026-09-14"
+    },
+    {
+      "book_id": "B002",
+      "member_id": "M002",
+      "borrowed": "2026-09-10",
+      "due": "2026-09-24",
+      "returned": "2026-09-29"
+    },
+    {
+      "book_id": "B005",
+      "member_id": "M001",
+      "borrowed": "2026-09-18",
+      "due": "2026-10-02",
+      "returned": null
+    },
+    {
+      "book_id": "B004",
+      "member_id": "M003",
+      "borrowed": "2026-09-25",
+      "due": "2026-10-09",
+      "returned": null
+    },
+    {
+      "book_id": "B006",
+      "member_id": "M003",
+      "borrowed": "2026-10-01",
+      "due": "2026-10-15",
+      "returned": null
+    },
+    {
+      "book_id": "B003",
+      "member_id": "M002",
+      "borrowed": "2026-10-06",
+      "due": "2026-10-20",
+      "returned": null
+    },
+    {
+      "book_id": "B008",
+      "member_id": "M003",
+      "borrowed": "2026-10-10",
+      "due": "2026-10-24",
+      "returned": null
+    }
+  ]
+}

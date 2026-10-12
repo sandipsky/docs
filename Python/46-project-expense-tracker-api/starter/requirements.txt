@@ -1,0 +1,8 @@
+# The packages this project needs. Install them all at once with:
+#     python -m pip install -r requirements.txt
+# Written with FastAPI 0.143, Pydantic 2.14, pytest 9.1 and mypy 2.4.
+fastapi[standard]>=0.143
+# httpx2 is what FastAPI's TestClient uses in tests (chapter 43 explains why).
+httpx2>=2.13
+pytest>=9.1
+mypy>=2.4
