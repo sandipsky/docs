@@ -107,4 +107,4 @@ This course takes you from your very first line of Python to building real progr
 
 ---
 
-**After this:** Django is the big, batteries-included web framework, and it's a natural next step after FastAPI. If data interests you, NumPy, pandas, and machine learning with scikit-learn are where Python really shines. Each of these could get its own folder.
+**After this:** the [Django course](../Django/README.md) is a natural next step. Django is the big, batteries-included web framework, and it builds on what you learned with FastAPI. If data interests you, NumPy, pandas, and machine learning with scikit-learn are where Python really shines. Each of those could get its own folder.
