@@ -147,9 +147,9 @@ For step 7, the router has its own small cache. By default it shows what it has 
 
 ---
 
-## Exercise 5 (Challenge): Pick one, A or B
+## Exercise 5 (Challenge): Pick one, A, B or C
 
-Both combine this chapter with earlier ones. Do one, or both if you're enjoying it.
+All three combine this chapter with earlier ones. Do one, or more if you're enjoying it.
 
 **A. Move the bookstore across.** Copy your finished chapter 29 `bookstore` folder to `bookstore-tsr`, run `npm uninstall react-router`, and install TanStack Router and the plugin. Then rebuild its routing:
 
@@ -167,6 +167,17 @@ Both combine this chapter with earlier ones. Do one, or both if you're enjoying 
 3. A missing book still shows the not-found page.
 4. Add the TanStack Query devtools next to the router's. Go list → book → back, and use the devtools to prove the list came from the cache.
 5. Set `staleTime: 30_000` on the list query and repeat step 4. What changed in the Console and in the devtools? Compare with what you saw in exercise 4, step 7.
+
+**C. Members only.** The shop wants an account page for customers and a stock room for staff only. In `router-practice`:
+
+1. Create `src/auth.ts` from the notes. Add a `/login` page with two buttons, **Log in as a customer** and **Log in as staff**. Each one calls `logIn` with a made-up name, then navigates to `/account`.
+2. Add the `_authenticated` layout route with `/account` and `/stock` inside it, as in the notes. `/account` says hello by name and has a **Log out** button. Add both pages to the header nav.
+3. Visit both pages three ways: logged out, as a customer, and as staff. Write down where each of the six visits ends up. Then log out while on `/account` and press the browser's Back button. What happens, and why?
+4. After logging in, send people back to the page they were trying to reach, not always to `/account`. Test it: while logged out, type `/stock` into the address bar, log in as staff, and you should land on `/stock`.
+5. Move the staff check into `requireRole`, and add the `?branch=` param from the notes. Now swap the check and the save on purpose. As a customer, visit `/stock?branch=leeds`, then open DevTools and look in **Application → Session storage**. What's there? Swap the lines back, clear the storage, and try again.
+6. Put a `console.log` at the top of each `beforeLoad` that prints the route's name and the `preload` property. With `defaultPreload: "intent"` turned on, hover over the Stock link without clicking, then click it. How many times did each one run, and what was `preload` each time?
+7. Make the check slow. Change `requireRole` so the function it returns is `async` and waits 500ms (copy the `wait()` helper from `src/api.ts`) before checking. Make `beforeLoad` `async` too, `await` the check, and confirm everything still works. Then delete the `await` and visit `/stock` as a customer. What's on screen, and what's in the Console? Put the `await` back.
+8. In a comment, answer this: a customer who knows some JavaScript could still get the stock page to show. How? And what would stop them seeing the real stock data?
 
 <details>
 <summary>Hint 1</summary>
@@ -193,5 +204,33 @@ For B, step 3: `fetchBook` answers `null` for a missing book, so the query cache
 <summary>Hint 4</summary>
 
 For B, step 4: the Query devtools come from `@tanstack/react-query-devtools`, as in chapter 31. Watch the `["books"]` query's status as you move between pages, and keep your `console.log` in `fetchBooks` so you can see whether a real fetch happened.
+
+</details>
+
+<details>
+<summary>Hint 5</summary>
+
+For C, steps 2 and 3: logging out doesn't need anything clever. Call `logOut()`, then navigate to `/login`. For the Back button, think about which function runs on *every* visit to a page, including one you reach by going back.
+
+</details>
+
+<details>
+<summary>Hint 6</summary>
+
+For C, step 4: there are two halves. When you turn someone away, `redirect` can take a `search` object, the same as a `Link`, and `beforeLoad` knows where they were going from `location.href`. Then `/login` needs a `validateSearch` to accept it. [Chapter 00](../00-project-setup/notes.md)'s `login.tsx` and `LoginPage` do exactly this. Read them, then write your own, and notice the safety check before it follows the link.
+
+</details>
+
+<details>
+<summary>Hint 7</summary>
+
+For C, step 7: the Console error starts with `Uncaught (in promise)`. An `async` function hands back a promise straight away and finishes its work later. Ask yourself who was still waiting for that promise when the check finally failed.
+
+</details>
+
+<details>
+<summary>Hint 8</summary>
+
+For C, step 8: open DevTools and look at the **Sources** tab. That's your code, on their computer, and they can pause it and change it. Now think of the one place in the whole system that a customer can't change.
 
 </details>

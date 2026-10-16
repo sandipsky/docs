@@ -479,6 +479,231 @@ function BooksPage() {
 
 `ensureQueryData` means "give me what's in the cache, and only fetch if there's nothing there". So the loader fills the cache before render, and the component reads the same cache. Because the data is sure to be there, `useSuspenseQuery` (the Suspense-ready hook [chapter 26](../26-error-boundaries-and-suspense/notes.md) promised) types `data` as `Book[]`, never `undefined`. Plain `useQuery` works too, with `data` typed `Book[] | undefined`. Come back to `/books` later and the list appears at once from the cache, with all of chapter 31's refetching rules still working. [Chapter 37](../37-project-task-board/notes.md) builds a whole app this way.
 
+### `beforeLoad`: checks at the door
+
+Some pages aren't for everyone. An account page needs a logged-in user, and a stock room might be for staff only. You *could* check inside the component, but by then it's too late: the loader has already fetched the data, and the page may flash up before you send the user away.
+
+**`beforeLoad`** is a function on a route that runs **before the loader, and before anything renders**. Think of a bouncer at a club door. They check your ID before you get in, not halfway across the dance floor. If the check fails, you're turned away and never see inside. If it passes, they might stamp your hand, so the staff inside know who you are without asking again.
+
+Here's everything the router runs on each visit, in order:
+
+| Step | What runs | In what order | Its job |
+|---|---|---|---|
+| 1 | `validateSearch` | parent routes first | check the search params |
+| 2 | `beforeLoad` | parent first, **one at a time** | checks and redirects |
+| 3 | `loader` | **all at the same time** | fetch the page's data |
+| 4 | `component` | | draw the page |
+
+"One at a time" matters. A child's `beforeLoad` doesn't start until its parent's has finished, and if the parent's throws, no route below it loads at all.
+
+To try it, you need someone to check. Here's a pretend login. A real app asks a server; this one keeps the user in **`sessionStorage`**, the short-lived cousin of [chapter 10](../10-project-todo-app/notes.md)'s `localStorage`. It has the same methods, but it's emptied when you close the tab.
+
+```ts
+// src/auth.ts
+export type Role = "customer" | "staff";
+export type User = { name: string; role: Role };
+
+export function getUser(): User | null {
+  const saved = sessionStorage.getItem("user");
+  return saved ? (JSON.parse(saved) as User) : null;
+}
+
+export function logIn(user: User): void {
+  sessionStorage.setItem("user", JSON.stringify(user));
+}
+
+export function logOut(): void {
+  sessionStorage.removeItem("user");
+}
+```
+
+Now a page that turns away anyone who isn't logged in:
+
+```tsx
+// src/routes/account.tsx (a first try)
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getUser } from "../auth.ts";
+
+export const Route = createFileRoute("/account")({
+  beforeLoad: () => {
+    if (!getUser()) {
+      throw redirect({ to: "/login" }); // stops here: no loader, no page
+    }
+  },
+  component: AccountPage,
+});
+```
+
+It's the same move as `throw notFound()` in a loader: throwing stops everything after it, and the router takes over. `redirect`'s `to` is checked like a `Link`'s, so a typo goes red, and `/login` has to be a real route. (The exercises build it.) The docs say you may also `return` a redirect from `beforeLoad` instead of throwing it, but `throw` is what you'll see in most code.
+
+`beforeLoad` gets one argument: an object full of facts about the visit. These are the parts you'll use most:
+
+| Property | What it is |
+|---|---|
+| `search` | the search params, already checked by `validateSearch` |
+| `params` | the path params, like `bookId` |
+| `context` | the router context, plus anything parent routes added (more on that below) |
+| `location` | where the user is going; `location.href` is the full address |
+| `preload` | `true` when the router is only preloading, not really visiting |
+
+In real code you'll often see the whole object called `ctx`, and then `ctx.search`, `ctx.context` and so on. It's just a name.
+
+### One check for many pages: a pathless layout route
+
+Copying that check onto every private page would be tiring, and one day someone would forget. Put it on a **parent** instead. Parents run first, so one check covers everything below.
+
+A file or folder whose name starts with **one** underscore is a **pathless layout route**. It wraps its child routes, but adds nothing to the URL. You met one in [chapter 00](../00-project-setup/notes.md), where it was the bouncer for the whole app.
+
+| File | URL |
+|---|---|
+| `src/routes/_authenticated.tsx` | none: it wraps everything in the folder below |
+| `src/routes/_authenticated/account.tsx` | `/account` |
+| `src/routes/_authenticated/stock.tsx` | `/stock` |
+
+```tsx
+// src/routes/_authenticated.tsx
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getUser } from "../auth.ts";
+
+export const Route = createFileRoute("/_authenticated")({
+  beforeLoad: () => {
+    const user = getUser();
+    if (!user) {
+      throw redirect({ to: "/login" });
+    }
+    return { user }; // the hand stamp: every child route gets this
+  },
+});
+```
+
+There's no `component`. A route without one renders `<Outlet />`, so the child page shows straight through. Move `account.tsx` into the folder and delete its own `beforeLoad`, because the parent does that job now. The plugin rewrites its string to `createFileRoute("/_authenticated/account")`, but the URL is still `/account`. Any name works after the underscore. The docs use `_authenticated`, so you'll see that name in a lot of real code.
+
+### Returning values: the hand stamp
+
+Look at the last line again: `return { user }`. Whatever `beforeLoad` returns is **added to the context** (the typed box from the section above) for this route's loader and every route below it. Child routes see it as `context.user` in their own `beforeLoad` and `loader`, and a component reads it with `Route.useRouteContext()`:
+
+```tsx
+// src/routes/_authenticated/account.tsx
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/account")({
+  component: AccountPage,
+});
+
+function AccountPage() {
+  const { user } = Route.useRouteContext(); // user: User, never null
+  return <h1 className="page-title">Hello, {user.name}</h1>;
+}
+```
+
+Hover over `user`: it's `User`, not `User | null`. TypeScript followed the `throw` in the parent, so it knows the parent only reaches `return` when there *is* a user. The check happened once, at the door, and every page inside gets the answer for free. It's the same kind of win as `Route.useParams()` giving you a `string`, never `undefined`.
+
+Now a second check, for staff only. It reads the `user` the parent added:
+
+```tsx
+// src/routes/_authenticated/stock.tsx
+import { createFileRoute, redirect } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/_authenticated/stock")({
+  beforeLoad: ({ context }) => {
+    if (context.user.role !== "staff") {
+      throw redirect({ to: "/account" });
+    }
+  },
+  component: StockPage,
+});
+
+function StockPage() {
+  return <h1 className="page-title">Stock room</h1>;
+}
+```
+
+That's two bouncers, one after the other:
+
+| Who visits `/stock` | What happens |
+|---|---|
+| Nobody logged in | the parent sends them to `/login`, and this check never runs |
+| A customer | the parent lets them through; this one sends them to `/account` |
+| Staff | both let them through, and the page loads |
+
+### Reusable checks
+
+When several pages need the same rule, real apps move it into a helper. A common shape is a function that **builds** a check:
+
+```ts
+// src/requireRole.ts
+import { redirect } from "@tanstack/react-router";
+import type { Role, User } from "./auth.ts";
+
+// Give it a role, and it hands back a check for beforeLoad to run.
+export function requireRole(role: Role) {
+  return ({ context }: { context: { user: User } }) => {
+    if (context.user.role !== role) {
+      throw redirect({ to: "/account" });
+    }
+  };
+}
+```
+
+```tsx
+// in stock.tsx
+beforeLoad: (ctx) => {
+  requireRole("staff")(ctx);
+},
+```
+
+Two pairs of brackets means two calls. `requireRole("staff")` *builds* the check, and `(ctx)` *runs* it with the visit's details. Big apps often take a list instead, like `requireRole(["staff", "manager"])`.
+
+Some checks have to wait, for example to ask a server what the user may do. Those are `async`, so `beforeLoad` must be `async` too, and must `await` every check:
+
+```tsx
+// If the checks were async, beforeLoad waits for each one in turn
+beforeLoad: async (ctx) => {
+  await requireActiveAccount(ctx); // finishes first...
+  await requireRole("staff")(ctx); // ...then this one runs
+},
+```
+
+Leave out an `await` and the page loads without waiting for the check. That's common mistake 9, below.
+
+### Checks first, side effects last
+
+Sometimes `beforeLoad` also *does* something, like saving a value from the URL for later pages or API calls to use. Anything a function does besides handing back a value is a **side effect**: writing to storage, logging, changing something outside the function.
+
+The rule is simple: **side effects go after every check.** Say staff can pick a shop branch with `/stock?branch=leeds`, and the app remembers it:
+
+```tsx
+// src/routes/_authenticated/stock.tsx
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import { requireRole } from "../../requireRole.ts";
+
+export const Route = createFileRoute("/_authenticated/stock")({
+  validateSearch: z.object({
+    branch: z.string().default("london").catch("london"),
+  }),
+  beforeLoad: (ctx) => {
+    requireRole("staff")(ctx);                           // 1. check
+    sessionStorage.setItem("branch", ctx.search.branch); // 2. then save
+  },
+  component: StockPage,
+});
+```
+
+Swap those two lines, and a customer who visits `/stock?branch=leeds` is still turned away, but `leeds` has already been saved. That's a bouncer who stamps your hand *before* checking your ID. In a real app the saved value might be a role or an account number that later API calls send to the server, so the order really matters.
+
+**Preloading runs it too.** With `defaultPreload: "intent"`, hovering over a link makes the router run that page's `beforeLoad` early, with `preload` set to `true`. The real visit runs `beforeLoad` again, with `preload` set to `false`. The router never reuses a preload's `beforeLoad` result, so your checks always run for real. But your side effects run on the hover as well. If one should only happen on a real visit, check first:
+
+```tsx
+if (!ctx.preload) {
+  sessionStorage.setItem("branch", ctx.search.branch);
+}
+```
+
+### A door, not a safe
+
+`beforeLoad` runs in the browser, and anyone can change the code running in their own browser. So it keeps people out of a *page*: it gives an honest user a sensible experience and sends them where they belong. It doesn't keep *data* safe. The real protection is the server refusing to send stock figures to a customer. Do both.
+
 ### Code splitting, for free
 
 In [chapter 26](../26-error-boundaries-and-suspense/notes.md) you split pages into separate downloads by hand, with `lazy()` and `<Suspense>`. The `autoCodeSplitting: true` option does it for every route file. Run `npm run build` and you'll see a small extra JavaScript file per page. There's one rule: **don't `export` your page components** from a route file, only `Route`. An exported component gets pulled into the main bundle and isn't split.
@@ -537,6 +762,28 @@ Without a schema, the router has no idea what's in the URL, so neither does Type
 
 Both export a `Link`, an `Outlet` and a `useNavigate`. In a project with both installed (say, halfway through moving the bookstore across), VS Code's auto-import can pick the wrong one. React Router's `Link` accepts any string, so the tell-tale sign is a typo that doesn't go red. Check the import line.
 
+**9. Forgetting `await` on an async check**
+
+```tsx
+beforeLoad: async (ctx) => {
+  requireRole("staff")(ctx); // ❌ an async check with no await
+},
+```
+
+An `async` function hands back a promise straight away and finishes its work later. Without `await`, `beforeLoad` doesn't wait for it, so the page loads. When the check fails a moment later, nobody is listening any more: the user stays on the page, and the Console shows an error starting `Uncaught (in promise)`. Every async check needs its `await`.
+
+**10. Saving before checking**
+
+A side effect written above a check still runs when the check turns the user away. Checks first, side effects last.
+
+**11. Fetching the page's data in `beforeLoad`**
+
+`beforeLoad` runs one route at a time, and again on every visit and every preload, so a slow fetch here holds up every route below it. Page data belongs in `loader`, which runs in parallel and has a cache. Keep `beforeLoad` for quick checks, and for small things the children need, like the user.
+
+**12. Thinking `beforeLoad` keeps data safe**
+
+It runs in the browser, so it keeps people out of the *page*, not away from the *data*. The server has to refuse too.
+
 ## Quick recap
 
 - **TanStack Router** is a router built around TypeScript, so links, params and search params are checked before your code runs. This chapter uses v1 with file-based routing.
@@ -545,6 +792,7 @@ Both export a `Link`, an `Outlet` and a `useNavigate`. In a project with both in
 - `Route.useParams()` gives a `string`, never `undefined`, but the item can still be missing. That's what `throw notFound()` is for.
 - **`validateSearch`** with a Zod schema turns the query string into typed values. `.default()` makes a param optional, and `.catch()` swaps rubbish for a fallback.
 - **Loaders** fetch before render, with `pendingComponent`, `errorComponent` and `notFoundComponent` for the other outcomes. With TanStack Query, the loader calls `ensureQueryData` and the component reads the same cache.
+- **`beforeLoad`** runs before any loader, parents first, one at a time. `throw redirect()` turns a visitor away, and whatever it returns joins the context of every route below. Put shared checks on a pathless layout route like `_authenticated`, `await` async checks, do side effects after the checks, and let the server do the real protecting.
 
 ---
 
