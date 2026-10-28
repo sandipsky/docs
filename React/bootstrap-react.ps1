@@ -7,7 +7,7 @@
     - Vite + React 19 + TypeScript + React Compiler + ESLint (npm create vite)
     - axios, TanStack Router (file-based routes + devtools), TanStack Query,
       zustand, zod, react-hook-form, SCSS
-    - src/{config,features/{auth,home,products},lib,providers,routes}
+    - src/{config,constants,features/{auth,home,products},lib,providers,routes}
     - .env + .env.example (.env is git-ignored), `@/` -> `src/` alias
     - Express mock API: login (admin / admin) + product CRUD, file-backed
 
@@ -128,11 +128,11 @@ Write-Info 'Writing project files...'
 
 # ---- Project config --------------------------------------------------------------
 Write-File 'vite.config.ts' @'
-import { defineConfig } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vite';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
+import babel from '@rolldown/plugin-babel';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import { fileURLToPath } from 'node:url';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -141,6 +141,7 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
+      semicolons: true, // generated routeTree.gen.ts uses semicolons, like the rest of the project
     }),
     react(),
     // React Compiler (automatic memoisation) via Babel
@@ -152,7 +153,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-})
+});
 '@
 
 Write-File 'tsconfig.app.json' @'
@@ -190,12 +191,12 @@ Write-File 'tsconfig.app.json' @'
 '@
 
 Write-File 'eslint.config.js' @'
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
   // routeTree.gen.ts is generated code - never lint it
@@ -221,7 +222,7 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
-])
+]);
 '@
 
 Write-File 'index.html' @'
@@ -256,16 +257,16 @@ VITE_API_TIMEOUT=30000
 
 # ---- App entry + styles ----------------------------------------------------------
 Write-File 'src/main.tsx' @'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.scss'
-import { AppProviders } from './providers/AppProviders'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.scss';
+import { AppProviders } from './providers/AppProviders';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppProviders />
   </StrictMode>,
-)
+);
 '@
 
 Write-File 'src/index.scss' @'
@@ -517,7 +518,7 @@ $space: 0.5rem;
 
 # ---- src/config ------------------------------------------------------------------
 Write-File 'src/config/env.ts' @'
-import { z } from 'zod'
+import { z } from 'zod';
 
 // Validate environment variables once at startup, so a typo in .env fails
 // loudly here instead of surfacing later as a confusing network error.
@@ -525,23 +526,23 @@ const envSchema = z.object({
   VITE_APP_ENV: z.enum(['dev', 'qa', 'prod']).default('dev'),
   VITE_API_BASE_URL: z.url('VITE_API_BASE_URL must be a valid URL'),
   VITE_API_TIMEOUT: z.coerce.number().int().positive().default(30000),
-})
+});
 
 function validateEnv() {
-  const result = envSchema.safeParse(import.meta.env)
+  const result = envSchema.safeParse(import.meta.env);
 
   if (!result.success) {
-    console.error('Invalid environment variables:')
+    console.error('Invalid environment variables:');
     for (const issue of result.error.issues) {
-      console.error(`  ${issue.path.join('.')}: ${issue.message}`)
+      console.error(`  ${issue.path.join('.')}: ${issue.message}`);
     }
-    throw new Error('Invalid environment configuration - check your .env file')
+    throw new Error('Invalid environment configuration - check your .env file');
   }
 
-  return result.data
+  return result.data;
 }
 
-const env = validateEnv()
+const env = validateEnv();
 
 // The rest of the app imports `config`, never `import.meta.env` directly.
 export const config = {
@@ -552,29 +553,65 @@ export const config = {
   app: {
     env: env.VITE_APP_ENV,
   },
-} as const
+} as const;
+'@
+
+# ---- src/constants --------------------------------------------------------------
+Write-File 'src/constants/httpErrorMessages.ts' @'
+export const HTTP_ERROR_MESSAGES: Record<number, string> = {
+  400: 'The request was invalid or malformed.',
+  401: 'Authentication is required. Please sign in.',
+  403: 'You do not have permission to perform this action.',
+  404: 'The requested resource was not found.',
+  408: 'The request timed out. Please try again.',
+  409: 'A conflict occurred with the current state of the resource.',
+  422: 'The request data failed validation.',
+  429: 'Too many requests. Please slow down and try again.',
+  500: 'An internal server error occurred. Please try again later.',
+  502: 'A gateway error occurred. Please try again later.',
+  503: 'The service is temporarily unavailable. Please try again later.',
+  504: 'The gateway timed out. Please try again later.',
+};
+
+export const DEFAULT_ERROR_MESSAGE = 'An unexpected error occurred.';
+export const NETWORK_ERROR_MESSAGE = 'Network error. Please check your connection.';
+'@
+
+Write-File 'src/constants/httpStatus.ts' @'
+export const HTTP_STATUS = {
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  METHOD_NOT_ALLOWED: 405,
+} as const;
+'@
+
+Write-File 'src/constants/index.ts' @'
+// Barrel file: one import path for every shared constant.
+export { DEFAULT_ERROR_MESSAGE, HTTP_ERROR_MESSAGES, NETWORK_ERROR_MESSAGE } from './httpErrorMessages';
+export { HTTP_STATUS } from './httpStatus';
 '@
 
 # ---- src/lib ---------------------------------------------------------------------
 Write-File 'src/lib/apiClient.ts' @'
-import axios, { type AxiosError } from 'axios'
-import { config } from '@/config/env'
-import { useAuthStore } from '@/features/auth/auth.store'
+import axios, { type AxiosError } from 'axios';
+import { config } from '@/config/env';
+import { useAuthStore } from '@/features/auth/auth.store';
 
 export const apiClient = axios.create({
   baseURL: config.api.baseUrl,
   timeout: config.api.timeout,
   headers: { 'Content-Type': 'application/json' },
-})
+});
 
 // Request interceptor: attach the bearer token (when logged in) to every call.
 apiClient.interceptors.request.use((requestConfig) => {
-  const token = useAuthStore.getState().token
+  const token = useAuthStore.getState().token;
   if (token) {
-    requestConfig.headers.Authorization = `Bearer ${token}`
+    requestConfig.headers.Authorization = `Bearer ${token}`;
   }
-  return requestConfig
-})
+  return requestConfig;
+});
 
 // Response interceptor: the mock server answers 403 for a missing/invalid
 // token, so log out and send the user back to /login.
@@ -583,31 +620,31 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 403) {
-      useAuthStore.getState().logout()
+      useAuthStore.getState().logout();
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   },
-)
+);
 '@
 
 Write-File 'src/lib/apiError.ts' @'
-import { isAxiosError } from 'axios'
+import { isAxiosError } from 'axios';
 
 // Pull a human-readable message out of whatever a request threw.
 // The mock server always answers failures with `{ message: string }`.
 export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
   if (isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message ?? error.message ?? fallback
+    return error.response?.data?.message ?? error.message ?? fallback;
   }
   if (error instanceof Error) {
-    return error.message
+    return error.message;
   }
-  return fallback
+  return fallback;
 }
 '@
 
 Write-File 'src/lib/queryClient.ts' @'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -618,12 +655,12 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
     },
   },
-})
+});
 '@
 
 Write-File 'src/lib/router.ts' @'
-import { createRouter } from '@tanstack/react-router'
-import { routeTree } from '@/routeTree.gen'
+import { createRouter } from '@tanstack/react-router';
+import { routeTree } from '@/routeTree.gen';
 
 // routeTree.gen.ts is generated from src/routes/ by @tanstack/router-plugin
 // (see vite.config.ts). Never edit it by hand.
@@ -631,13 +668,13 @@ export const router = createRouter({
   routeTree,
   defaultPreload: 'intent', // start loading a route when the user hovers its link
   scrollRestoration: true,
-})
+});
 
 // Registers our router with TanStack's types so <Link to="..."> and
 // useNavigate() are type-checked against the real route paths.
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 '@
@@ -646,17 +683,17 @@ Write-File 'src/lib/index.ts' @'
 // Barrel file: one import path for the shared infrastructure.
 // `apiClient` is listed first on purpose - it must be initialised before the
 // router pulls in the feature modules that use it.
-export { apiClient } from './apiClient'
-export { getApiErrorMessage } from './apiError'
-export { queryClient } from './queryClient'
-export { router } from './router'
+export { apiClient } from './apiClient';
+export { getApiErrorMessage } from './apiError';
+export { queryClient } from './queryClient';
+export { router } from './router';
 '@
 
 # ---- src/providers ---------------------------------------------------------------
 Write-File 'src/providers/AppProviders.tsx' @'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider } from '@tanstack/react-router'
-import { queryClient, router } from '@/lib'
+import { QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider } from '@tanstack/react-router';
+import { queryClient, router } from '@/lib';
 
 // Every app-wide provider lives here so main.tsx stays a one-liner.
 export const AppProviders = () => {
@@ -664,56 +701,56 @@ export const AppProviders = () => {
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
     </QueryClientProvider>
-  )
-}
+  );
+};
 '@
 
 # ---- src/features/auth -----------------------------------------------------------
 Write-File 'src/features/auth/auth.types.ts' @'
 export interface ILoginBody {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 export interface IUser {
-  id: number
-  name: string
-  username: string
+  id: number;
+  name: string;
+  username: string;
 }
 
 export interface ILoginResponse {
-  token: string
-  user: IUser
+  token: string;
+  user: IUser;
 }
 '@
 
 Write-File 'src/features/auth/auth.api.ts' @'
-import { apiClient } from '@/lib'
-import type { ILoginBody, ILoginResponse } from './auth.types'
+import { apiClient } from '@/lib';
+import type { ILoginBody, ILoginResponse } from './auth.types';
 
 export const login = async (body: ILoginBody) => {
-  const res = await apiClient.post<ILoginResponse>('/auth/login', body)
-  return res.data
-}
+  const res = await apiClient.post<ILoginResponse>('/auth/login', body);
+  return res.data;
+};
 '@
 
 Write-File 'src/features/auth/auth.query.ts' @'
-import { useMutation } from '@tanstack/react-query'
-import { login } from './auth.api'
+import { useMutation } from '@tanstack/react-query';
+import { login } from './auth.api';
 
-export const useLogin = () => useMutation({ mutationFn: login })
+export const useLogin = () => useMutation({ mutationFn: login });
 '@
 
 Write-File 'src/features/auth/auth.store.ts' @'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { IUser } from './auth.types'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { IUser } from './auth.types';
 
 interface AuthState {
-  token: string | null
-  user: IUser | null
-  setAuth: (token: string, user: IUser) => void
-  logout: () => void
+  token: string | null;
+  user: IUser | null;
+  setAuth: (token: string, user: IUser) => void;
+  logout: () => void;
 }
 
 // Persisted to localStorage under the key "auth", so a page refresh keeps you logged in.
@@ -724,41 +761,41 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       setAuth: (token, user) => set({ token, user }),
       logout: () => {
-        set({ token: null, user: null })
+        set({ token: null, user: null });
         // Hard redirect on purpose: it also wipes the in-memory React Query cache.
-        window.location.href = '/login'
+        window.location.href = '/login';
       },
     }),
     { name: 'auth' },
   ),
-)
+);
 '@
 
 Write-File 'src/features/auth/components/LoginPage.tsx' @'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useNavigate } from '@tanstack/react-router'
-import { getApiErrorMessage } from '@/lib'
-import { useLogin } from '../auth.query'
-import { useAuthStore } from '../auth.store'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useNavigate } from '@tanstack/react-router';
+import { getApiErrorMessage } from '@/lib';
+import { useLogin } from '../auth.query';
+import { useAuthStore } from '../auth.store';
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
-})
+});
 
-type LoginFormValues = z.infer<typeof loginSchema>
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 type LoginPageProps = {
   /** Where to go after a successful login (comes from `?redirect=...`). */
-  redirectTo?: string
-}
+  redirectTo?: string;
+};
 
 export const LoginPage = ({ redirectTo }: LoginPageProps) => {
-  const navigate = useNavigate()
-  const login = useLogin()
-  const setAuth = useAuthStore((s) => s.setAuth)
+  const navigate = useNavigate();
+  const login = useLogin();
+  const setAuth = useAuthStore((s) => s.setAuth);
 
   const {
     register,
@@ -767,18 +804,18 @@ export const LoginPage = ({ redirectTo }: LoginPageProps) => {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { username: '', password: '' },
-  })
+  });
 
   const onSubmit = (values: LoginFormValues) => {
     login.mutate(values, {
       onSuccess: (data) => {
-        setAuth(data.token, data.user)
+        setAuth(data.token, data.user);
         // Only follow same-site paths, never an external URL smuggled into the query string.
-        const target = redirectTo?.startsWith('/') ? redirectTo : '/'
-        navigate({ href: target })
+        const target = redirectTo?.startsWith('/') ? redirectTo : '/';
+        navigate({ href: target });
       },
-    })
-  }
+    });
+  };
 
   return (
     <div className="login-page">
@@ -814,24 +851,24 @@ export const LoginPage = ({ redirectTo }: LoginPageProps) => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 '@
 
 Write-File 'src/features/auth/index.ts' @'
-export { LoginPage } from './components/LoginPage'
-export { useAuthStore } from './auth.store'
-export { useLogin } from './auth.query'
-export type { ILoginBody, ILoginResponse, IUser } from './auth.types'
+export { LoginPage } from './components/LoginPage';
+export { useAuthStore } from './auth.store';
+export { useLogin } from './auth.query';
+export type { ILoginBody, ILoginResponse, IUser } from './auth.types';
 '@
 
 # ---- src/features/home -----------------------------------------------------------
 Write-File 'src/features/home/components/Home.tsx' @'
-import { Link } from '@tanstack/react-router'
-import { useAuthStore } from '@/features/auth'
+import { Link } from '@tanstack/react-router';
+import { useAuthStore } from '@/features/auth';
 
 export const Home = () => {
-  const user = useAuthStore((s) => s.user)
+  const user = useAuthStore((s) => s.user);
 
   return (
     <div className="card">
@@ -846,66 +883,66 @@ export const Home = () => {
         </Link>
       </p>
     </div>
-  )
-}
+  );
+};
 '@
 
 Write-File 'src/features/home/index.ts' @'
-export { Home } from './components/Home'
+export { Home } from './components/Home';
 '@
 
 # ---- src/features/products -------------------------------------------------------
 Write-File 'src/features/products/product.types.ts' @'
 export interface IProduct {
-  id: number
-  name: string
-  price: number
-  description: string
+  id: number;
+  name: string;
+  price: number;
+  description: string;
 }
 
 // What the client sends when creating/updating - the server owns the id.
-export type IProductBody = Omit<IProduct, 'id'>
+export type IProductBody = Omit<IProduct, 'id'>;
 '@
 
 Write-File 'src/features/products/products.api.ts' @'
-import { apiClient } from '@/lib'
-import type { IProduct, IProductBody } from './product.types'
+import { apiClient } from '@/lib';
+import type { IProduct, IProductBody } from './product.types';
 
 export const getProducts = async () => {
-  const res = await apiClient.get<IProduct[]>('/products')
-  return res.data
-}
+  const res = await apiClient.get<IProduct[]>('/products');
+  return res.data;
+};
 
 export const getProduct = async (id: number) => {
-  const res = await apiClient.get<IProduct>(`/products/${id}`)
-  return res.data
-}
+  const res = await apiClient.get<IProduct>(`/products/${id}`);
+  return res.data;
+};
 
 export const createProduct = async (body: IProductBody) => {
-  const res = await apiClient.post<IProduct>('/products', body)
-  return res.data
-}
+  const res = await apiClient.post<IProduct>('/products', body);
+  return res.data;
+};
 
 export const updateProduct = async (id: number, body: IProductBody) => {
-  const res = await apiClient.put<IProduct>(`/products/${id}`, body)
-  return res.data
-}
+  const res = await apiClient.put<IProduct>(`/products/${id}`, body);
+  return res.data;
+};
 
 export const deleteProduct = async (id: number) => {
-  await apiClient.delete(`/products/${id}`)
-}
+  await apiClient.delete(`/products/${id}`);
+};
 '@
 
 Write-File 'src/features/products/product.query.ts' @'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createProduct,
   deleteProduct,
   getProduct,
   getProducts,
   updateProduct,
-} from './products.api'
-import type { IProductBody } from './product.types'
+} from './products.api';
+import type { IProductBody } from './product.types';
 
 // Query keys in one place so invalidation never drifts out of sync.
 // `detail` starts with the same 'products' prefix, so invalidating
@@ -913,59 +950,59 @@ import type { IProductBody } from './product.types'
 export const productKeys = {
   all: ['products'] as const,
   detail: (id: number) => ['products', id] as const,
-}
+};
 
-export const useProducts = () => useQuery({ queryKey: productKeys.all, queryFn: getProducts })
+export const useProducts = () => useQuery({ queryKey: productKeys.all, queryFn: getProducts });
 
 export const useProduct = (id: number, enabled = true) =>
   useQuery({
     queryKey: productKeys.detail(id),
     queryFn: () => getProduct(id),
     enabled: enabled && Number.isFinite(id),
-  })
+  });
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: IProductBody) => createProduct(body),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: productKeys.all }),
-  })
-}
+  });
+};
 
 export const useUpdateProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, body }: { id: number; body: IProductBody }) => updateProduct(id, body),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: productKeys.all }),
-  })
-}
+  });
+};
 
 export const useDeleteProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => deleteProduct(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: productKeys.all }),
-  })
-}
+  });
+};
 '@
 
 Write-File 'src/features/products/components/ProductList.tsx' @'
-import { Link } from '@tanstack/react-router'
-import { getApiErrorMessage } from '@/lib'
-import { useDeleteProduct, useProducts } from '../product.query'
+import { Link } from '@tanstack/react-router';
+import { getApiErrorMessage } from '@/lib';
+import { useDeleteProduct, useProducts } from '../product.query';
 
 export const ProductList = () => {
-  const { data: products, isLoading, isError, error } = useProducts()
-  const deleteProduct = useDeleteProduct()
+  const { data: products, isLoading, isError, error } = useProducts();
+  const deleteProduct = useDeleteProduct();
 
   const onDelete = (id: number, name: string) => {
     if (window.confirm(`Delete "${name}"?`)) {
-      deleteProduct.mutate(id)
+      deleteProduct.mutate(id);
     }
-  }
+  };
 
-  if (isLoading) return <p>Loading products...</p>
-  if (isError) return <div className="alert">{getApiErrorMessage(error)}</div>
+  if (isLoading) return <p>Loading products...</p>;
+  if (isError) return <div className="alert">{getApiErrorMessage(error)}</div>;
 
   return (
     <>
@@ -1035,39 +1072,39 @@ export const ProductList = () => {
         </tbody>
       </table>
     </>
-  )
-}
+  );
+};
 '@
 
 Write-File 'src/features/products/components/ProductForm.tsx' @'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { getApiErrorMessage } from '@/lib'
-import { useCreateProduct, useProduct, useUpdateProduct } from '../product.query'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { getApiErrorMessage } from '@/lib';
+import { useCreateProduct, useProduct, useUpdateProduct } from '../product.query';
 
 type ProductFormProps = {
-  mode: 'add' | 'edit' | 'view'
-  productId?: string // present for edit + view, absent for add
-}
+  mode: 'add' | 'edit' | 'view';
+  productId?: string; // present for edit + view, absent for add
+};
 
 const productSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   price: z.number({ error: 'Price must be a number' }).positive('Price must be greater than 0'),
   description: z.string().min(1, 'Description is required'),
-})
+});
 
-type ProductFormValues = z.infer<typeof productSchema>
+type ProductFormValues = z.infer<typeof productSchema>;
 
 export const ProductForm = ({ mode, productId }: ProductFormProps) => {
-  const id = Number(productId)
-  const navigate = useNavigate()
+  const id = Number(productId);
+  const navigate = useNavigate();
 
   // Only fetch when there is an id to fetch (edit/view) - never for "add".
-  const product = useProduct(id, mode !== 'add')
-  const createProduct = useCreateProduct()
-  const updateProduct = useUpdateProduct()
+  const product = useProduct(id, mode !== 'add');
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
 
   const {
     register,
@@ -1084,21 +1121,21 @@ export const ProductForm = ({ mode, productId }: ProductFormProps) => {
           description: product.data.description,
         }
       : undefined,
-  })
+  });
 
   const onSubmit = (values: ProductFormValues) => {
-    const backToList = () => navigate({ to: '/products' })
+    const backToList = () => navigate({ to: '/products' });
 
     if (mode === 'edit') {
-      updateProduct.mutate({ id, body: values }, { onSuccess: backToList })
+      updateProduct.mutate({ id, body: values }, { onSuccess: backToList });
     } else {
-      createProduct.mutate(values, { onSuccess: backToList })
+      createProduct.mutate(values, { onSuccess: backToList });
     }
-  }
+  };
 
-  if (mode !== 'add' && product.isLoading) return <p>Loading product...</p>
+  if (mode !== 'add' && product.isLoading) return <p>Loading product...</p>;
   if (mode !== 'add' && product.isError) {
-    return <div className="alert">{getApiErrorMessage(product.error)}</div>
+    return <div className="alert">{getApiErrorMessage(product.error)}</div>;
   }
 
   if (mode === 'view') {
@@ -1122,11 +1159,11 @@ export const ProductForm = ({ mode, productId }: ProductFormProps) => {
           <strong>Description:</strong> {product.data?.description}
         </p>
       </div>
-    )
+    );
   }
 
-  const saving = createProduct.isPending || updateProduct.isPending
-  const saveError = createProduct.error ?? updateProduct.error
+  const saving = createProduct.isPending || updateProduct.isPending;
+  const saveError = createProduct.error ?? updateProduct.error;
 
   return (
     <div className="card">
@@ -1164,13 +1201,13 @@ export const ProductForm = ({ mode, productId }: ProductFormProps) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 '@
 
 Write-File 'src/features/products/index.ts' @'
-export { ProductList } from './components/ProductList'
-export { ProductForm } from './components/ProductForm'
+export { ProductList } from './components/ProductList';
+export { ProductForm } from './components/ProductForm';
 export {
   productKeys,
   useProducts,
@@ -1178,18 +1215,18 @@ export {
   useCreateProduct,
   useUpdateProduct,
   useDeleteProduct,
-} from './product.query'
-export type { IProduct, IProductBody } from './product.types'
+} from './product.query';
+export type { IProduct, IProductBody } from './product.types';
 '@
 
 # ---- src/routes (file-based routing) ---------------------------------------------
 Write-File 'src/routes/__root.tsx' @'
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 export const Route = createRootRoute({
   component: RootComponent,
-})
+});
 
 function RootComponent() {
   return (
@@ -1198,59 +1235,59 @@ function RootComponent() {
       {/* Devtools render nothing in production builds */}
       <TanStackRouterDevtools position="bottom-right" />
     </>
-  )
+  );
 }
 '@
 
 Write-File 'src/routes/login.tsx' @'
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { z } from 'zod'
-import { LoginPage, useAuthStore } from '@/features/auth'
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { z } from 'zod';
+import { LoginPage, useAuthStore } from '@/features/auth';
 
 // /login?redirect=/products -> after logging in, go back to where the user was heading.
 const loginSearchSchema = z.object({
   redirect: z.string().optional(),
-})
+});
 
 export const Route = createFileRoute('/login')({
   validateSearch: loginSearchSchema,
   // Already logged in? Skip the login page.
   beforeLoad: () => {
     if (useAuthStore.getState().token) {
-      throw redirect({ to: '/' })
+      throw redirect({ to: '/' });
     }
   },
   component: LoginRoute,
-})
+});
 
 function LoginRoute() {
-  const { redirect: redirectTo } = Route.useSearch()
-  return <LoginPage redirectTo={redirectTo} />
+  const { redirect: redirectTo } = Route.useSearch();
+  return <LoginPage redirectTo={redirectTo} />;
 }
 '@
 
 Write-File 'src/routes/_authenticated.tsx' @'
-import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router'
-import { useAuthStore } from '@/features/auth'
+import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router';
+import { useAuthStore } from '@/features/auth';
 
 // Layout route: everything inside src/routes/_authenticated/ requires a login.
 // `beforeLoad` runs before any child route renders - think of it as a bouncer.
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ location }) => {
-    const isAuthenticated = !!useAuthStore.getState().token
+    const isAuthenticated = !!useAuthStore.getState().token;
     if (!isAuthenticated) {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },
-      })
+      });
     }
   },
   component: AuthenticatedLayout,
-})
+});
 
 function AuthenticatedLayout() {
-  const user = useAuthStore((s) => s.user)
-  const logout = useAuthStore((s) => s.logout)
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
 
   return (
     <>
@@ -1272,63 +1309,63 @@ function AuthenticatedLayout() {
         <Outlet />
       </main>
     </>
-  )
+  );
 }
 '@
 
 Write-File 'src/routes/_authenticated/index.tsx' @'
-import { createFileRoute } from '@tanstack/react-router'
-import { Home } from '@/features/home'
+import { createFileRoute } from '@tanstack/react-router';
+import { Home } from '@/features/home';
 
 export const Route = createFileRoute('/_authenticated/')({
   component: Home,
-})
+});
 '@
 
 Write-File 'src/routes/_authenticated/products/index.tsx' @'
-import { createFileRoute } from '@tanstack/react-router'
-import { ProductList } from '@/features/products'
+import { createFileRoute } from '@tanstack/react-router';
+import { ProductList } from '@/features/products';
 
 export const Route = createFileRoute('/_authenticated/products/')({
   component: ProductList,
-})
+});
 '@
 
 Write-File 'src/routes/_authenticated/products/add.tsx' @'
-import { createFileRoute } from '@tanstack/react-router'
-import { ProductForm } from '@/features/products'
+import { createFileRoute } from '@tanstack/react-router';
+import { ProductForm } from '@/features/products';
 
 // The static segment `add` wins over the dynamic `$productId` sibling.
 export const Route = createFileRoute('/_authenticated/products/add')({
   component: () => <ProductForm mode="add" />,
-})
+});
 '@
 
 Write-File 'src/routes/_authenticated/products/$productId/index.tsx' @'
-import { createFileRoute } from '@tanstack/react-router'
-import { ProductForm } from '@/features/products'
+import { createFileRoute } from '@tanstack/react-router';
+import { ProductForm } from '@/features/products';
 
 export const Route = createFileRoute('/_authenticated/products/$productId/')({
   component: ProductViewPage,
-})
+});
 
 function ProductViewPage() {
-  const { productId } = Route.useParams()
-  return <ProductForm mode="view" productId={productId} />
+  const { productId } = Route.useParams();
+  return <ProductForm mode="view" productId={productId} />;
 }
 '@
 
 Write-File 'src/routes/_authenticated/products/$productId/edit.tsx' @'
-import { createFileRoute } from '@tanstack/react-router'
-import { ProductForm } from '@/features/products'
+import { createFileRoute } from '@tanstack/react-router';
+import { ProductForm } from '@/features/products';
 
 export const Route = createFileRoute('/_authenticated/products/$productId/edit')({
   component: ProductEditPage,
-})
+});
 
 function ProductEditPage() {
-  const { productId } = Route.useParams()
-  return <ProductForm mode="edit" productId={productId} />
+  const { productId } = Route.useParams();
+  return <ProductForm mode="edit" productId={productId} />;
 }
 '@
 
@@ -1344,97 +1381,97 @@ Write-File 'src/routeTree.gen.ts' @'
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
-import { Route as AuthenticatedProductsAddRouteImport } from './routes/_authenticated/products/add'
-import { Route as AuthenticatedProductsProductIdIndexRouteImport } from './routes/_authenticated/products/$productId/index'
-import { Route as AuthenticatedProductsProductIdEditRouteImport } from './routes/_authenticated/products/$productId/edit'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
+import { Route as LoginRouteImport } from './routes/login';
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index';
+import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index';
+import { Route as AuthenticatedProductsAddRouteImport } from './routes/_authenticated/products/add';
+import { Route as AuthenticatedProductsProductIdIndexRouteImport } from './routes/_authenticated/products/$productId/index';
+import { Route as AuthenticatedProductsProductIdEditRouteImport } from './routes/_authenticated/products/$productId/edit';
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
-} as any)
+} as any);
 const AuthenticatedProductsIndexRoute =
   AuthenticatedProductsIndexRouteImport.update({
     id: '/products/',
     path: '/products/',
     getParentRoute: () => AuthenticatedRoute,
-  } as any)
+  } as any);
 const AuthenticatedProductsAddRoute =
   AuthenticatedProductsAddRouteImport.update({
     id: '/products/add',
     path: '/products/add',
     getParentRoute: () => AuthenticatedRoute,
-  } as any)
+  } as any);
 const AuthenticatedProductsProductIdIndexRoute =
   AuthenticatedProductsProductIdIndexRouteImport.update({
     id: '/products/$productId/',
     path: '/products/$productId/',
     getParentRoute: () => AuthenticatedRoute,
-  } as any)
+  } as any);
 const AuthenticatedProductsProductIdEditRoute =
   AuthenticatedProductsProductIdEditRouteImport.update({
     id: '/products/$productId/edit',
     path: '/products/$productId/edit',
     getParentRoute: () => AuthenticatedRoute,
-  } as any)
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '/login': typeof LoginRoute
-  '/products/add': typeof AuthenticatedProductsAddRoute
-  '/products/': typeof AuthenticatedProductsIndexRoute
-  '/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute
-  '/products/$productId/': typeof AuthenticatedProductsProductIdIndexRoute
+  '/': typeof AuthenticatedIndexRoute;
+  '/login': typeof LoginRoute;
+  '/products/add': typeof AuthenticatedProductsAddRoute;
+  '/products/': typeof AuthenticatedProductsIndexRoute;
+  '/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute;
+  '/products/$productId/': typeof AuthenticatedProductsProductIdIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/login': typeof LoginRoute
-  '/': typeof AuthenticatedIndexRoute
-  '/products/add': typeof AuthenticatedProductsAddRoute
-  '/products': typeof AuthenticatedProductsIndexRoute
-  '/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute
-  '/products/$productId': typeof AuthenticatedProductsProductIdIndexRoute
+  '/login': typeof LoginRoute;
+  '/': typeof AuthenticatedIndexRoute;
+  '/products/add': typeof AuthenticatedProductsAddRoute;
+  '/products': typeof AuthenticatedProductsIndexRoute;
+  '/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute;
+  '/products/$productId': typeof AuthenticatedProductsProductIdIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/login': typeof LoginRoute
-  '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/products/add': typeof AuthenticatedProductsAddRoute
-  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
-  '/_authenticated/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute
-  '/_authenticated/products/$productId/': typeof AuthenticatedProductsProductIdIndexRoute
+  __root__: typeof rootRouteImport;
+  '/_authenticated': typeof AuthenticatedRouteWithChildren;
+  '/login': typeof LoginRoute;
+  '/_authenticated/': typeof AuthenticatedIndexRoute;
+  '/_authenticated/products/add': typeof AuthenticatedProductsAddRoute;
+  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute;
+  '/_authenticated/products/$productId/edit': typeof AuthenticatedProductsProductIdEditRoute;
+  '/_authenticated/products/$productId/': typeof AuthenticatedProductsProductIdIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
     | '/login'
     | '/products/add'
     | '/products/'
     | '/products/$productId/edit'
-    | '/products/$productId/'
-  fileRoutesByTo: FileRoutesByTo
+    | '/products/$productId/';
+  fileRoutesByTo: FileRoutesByTo;
   to:
     | '/login'
     | '/'
     | '/products/add'
     | '/products'
     | '/products/$productId/edit'
-    | '/products/$productId'
+    | '/products/$productId';
   id:
     | '__root__'
     | '/_authenticated'
@@ -1443,74 +1480,74 @@ export interface FileRouteTypes {
     | '/_authenticated/products/add'
     | '/_authenticated/products/'
     | '/_authenticated/products/$productId/edit'
-    | '/_authenticated/products/$productId/'
-  fileRoutesById: FileRoutesById
+    | '/_authenticated/products/$productId/';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  LoginRoute: typeof LoginRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/_authenticated';
+      path: '';
+      fullPath: '/';
+      preLoaderRoute: typeof AuthenticatedRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/login';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/_authenticated/': {
-      id: '/_authenticated/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
+      id: '/_authenticated/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
     '/_authenticated/products/': {
-      id: '/_authenticated/products/'
-      path: '/products'
-      fullPath: '/products/'
-      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
+      id: '/_authenticated/products/';
+      path: '/products';
+      fullPath: '/products/';
+      preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
     '/_authenticated/products/add': {
-      id: '/_authenticated/products/add'
-      path: '/products/add'
-      fullPath: '/products/add'
-      preLoaderRoute: typeof AuthenticatedProductsAddRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
+      id: '/_authenticated/products/add';
+      path: '/products/add';
+      fullPath: '/products/add';
+      preLoaderRoute: typeof AuthenticatedProductsAddRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
     '/_authenticated/products/$productId/': {
-      id: '/_authenticated/products/$productId/'
-      path: '/products/$productId'
-      fullPath: '/products/$productId/'
-      preLoaderRoute: typeof AuthenticatedProductsProductIdIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
+      id: '/_authenticated/products/$productId/';
+      path: '/products/$productId';
+      fullPath: '/products/$productId/';
+      preLoaderRoute: typeof AuthenticatedProductsProductIdIndexRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
     '/_authenticated/products/$productId/edit': {
-      id: '/_authenticated/products/$productId/edit'
-      path: '/products/$productId/edit'
-      fullPath: '/products/$productId/edit'
-      preLoaderRoute: typeof AuthenticatedProductsProductIdEditRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
+      id: '/_authenticated/products/$productId/edit';
+      path: '/products/$productId/edit';
+      fullPath: '/products/$productId/edit';
+      preLoaderRoute: typeof AuthenticatedProductsProductIdEditRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
   }
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedProductsAddRoute: typeof AuthenticatedProductsAddRoute
-  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
-  AuthenticatedProductsProductIdEditRoute: typeof AuthenticatedProductsProductIdEditRoute
-  AuthenticatedProductsProductIdIndexRoute: typeof AuthenticatedProductsProductIdIndexRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute;
+  AuthenticatedProductsAddRoute: typeof AuthenticatedProductsAddRoute;
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute;
+  AuthenticatedProductsProductIdEditRoute: typeof AuthenticatedProductsProductIdEditRoute;
+  AuthenticatedProductsProductIdIndexRoute: typeof AuthenticatedProductsProductIdIndexRoute;
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -1521,41 +1558,41 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedProductsProductIdEditRoute,
   AuthenticatedProductsProductIdIndexRoute:
     AuthenticatedProductsProductIdIndexRoute,
-}
+};
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
-)
+);
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 '@
 
 # ---- mock-server -----------------------------------------------------------------
 Write-File 'mock-server/server.js' @'
-import express from 'express'
-import cors from 'cors'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import express from 'express';
+import cors from 'cors';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
-const app = express()
-const PORT = Number(process.env.MOCK_API_PORT ?? 3000)
+const app = express();
+const PORT = Number(process.env.MOCK_API_PORT ?? 3000);
 
-app.use(cors({ origin: true, credentials: true }))
-app.use(express.json())
+app.use(cors({ origin: true, credentials: true }));
+app.use(express.json());
 
 // ---------------------------------------------------------------------------
 // File-backed "database": data lives in db.json next to this file, so it
 // survives restarts. Delete db.json to reset everything to the seed below.
 // ---------------------------------------------------------------------------
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const DB_PATH = join(__dirname, 'db.json')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DB_PATH = join(__dirname, 'db.json');
 
 const SEED = {
   users: [{ id: 1, name: 'Admin', username: 'admin', password: 'admin' }],
@@ -1564,22 +1601,22 @@ const SEED = {
     { id: 2, name: 'Mouse', price: 1200, description: 'Wireless mouse' },
     { id: 3, name: 'Monitor', price: 15000, description: '27 inch 4K display' },
   ],
-}
+};
 
-const writeDb = (db) => writeFileSync(DB_PATH, JSON.stringify(db, null, 2) + '\n')
+const writeDb = (db) => writeFileSync(DB_PATH, JSON.stringify(db, null, 2) + '\n');
 const readDb = () => {
-  if (!existsSync(DB_PATH)) writeDb(SEED)
-  return JSON.parse(readFileSync(DB_PATH, 'utf-8'))
-}
+  if (!existsSync(DB_PATH)) writeDb(SEED);
+  return JSON.parse(readFileSync(DB_PATH, 'utf-8'));
+};
 
 // Next id = highest existing id + 1 (starts at 1 when the list is empty)
-const nextId = (items) => items.reduce((max, item) => Math.max(max, item.id), 0) + 1
+const nextId = (items) => items.reduce((max, item) => Math.max(max, item.id), 0) + 1;
 
 // Never send passwords back to the client
-const toPublicUser = ({ password: _password, ...user }) => user
+const toPublicUser = ({ password: _password, ...user }) => user;
 
 // A real server would sign a JWT. For a mock, one fixed token is enough.
-const DUMMY_TOKEN = 'mock-token-admin'
+const DUMMY_TOKEN = 'mock-token-admin';
 
 // ---------------------------------------------------------------------------
 // Auth middleware: protected routes need "Authorization: Bearer <token>".
@@ -1587,82 +1624,82 @@ const DUMMY_TOKEN = 'mock-token-admin'
 // turns into a logout + redirect to /login. Keep the two in sync.
 // ---------------------------------------------------------------------------
 const requireAuth = (req, res, next) => {
-  const header = req.headers.authorization ?? ''
-  const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length) : null
+  const header = req.headers.authorization ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length) : null;
   if (token !== DUMMY_TOKEN) {
-    return res.status(403).json({ message: 'Forbidden: missing or invalid token' })
+    return res.status(403).json({ message: 'Forbidden: missing or invalid token' });
   }
-  next()
-}
+  next();
+};
 
 // ---------------------------------------------------------------------------
 // Auth
 // ---------------------------------------------------------------------------
 app.post('/auth/login', (req, res) => {
-  const { username, password } = req.body ?? {}
+  const { username, password } = req.body ?? {};
   if (!username || !password) {
-    return res.status(400).json({ message: 'username and password are required' })
+    return res.status(400).json({ message: 'username and password are required' });
   }
 
-  const db = readDb()
-  const user = db.users.find((u) => u.username === username && u.password === password)
+  const db = readDb();
+  const user = db.users.find((u) => u.username === username && u.password === password);
   if (!user) {
-    return res.status(401).json({ message: 'Invalid username or password' })
+    return res.status(401).json({ message: 'Invalid username or password' });
   }
 
-  res.json({ token: DUMMY_TOKEN, user: toPublicUser(user) })
-})
+  res.json({ token: DUMMY_TOKEN, user: toPublicUser(user) });
+});
 
 // ---------------------------------------------------------------------------
 // Products (protected)
 // ---------------------------------------------------------------------------
 const validateProduct = ({ name, price, description }) => {
-  if (typeof name !== 'string' || !name.trim()) return 'name is required'
+  if (typeof name !== 'string' || !name.trim()) return 'name is required';
   if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) {
-    return 'price must be a positive number'
+    return 'price must be a positive number';
   }
   if (description !== undefined && typeof description !== 'string') {
-    return 'description must be a string'
+    return 'description must be a string';
   }
-  return null
-}
+  return null;
+};
 
 app.get('/products', requireAuth, (req, res) => {
-  res.json(readDb().products)
-})
+  res.json(readDb().products);
+});
 
 app.get('/products/:id', requireAuth, (req, res) => {
-  const product = readDb().products.find((p) => p.id === Number(req.params.id))
-  if (!product) return res.status(404).json({ message: 'Product not found' })
-  res.json(product)
-})
+  const product = readDb().products.find((p) => p.id === Number(req.params.id));
+  if (!product) return res.status(404).json({ message: 'Product not found' });
+  res.json(product);
+});
 
 app.post('/products', requireAuth, (req, res) => {
-  const body = req.body ?? {}
-  const error = validateProduct(body)
-  if (error) return res.status(400).json({ message: error })
+  const body = req.body ?? {};
+  const error = validateProduct(body);
+  if (error) return res.status(400).json({ message: error });
 
-  const db = readDb()
+  const db = readDb();
   const product = {
     id: nextId(db.products),
     name: body.name.trim(),
     price: body.price,
     description: body.description ?? '',
-  }
-  db.products.push(product)
-  writeDb(db)
-  res.status(201).json(product)
-})
+  };
+  db.products.push(product);
+  writeDb(db);
+  res.status(201).json(product);
+});
 
 app.put('/products/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id)
-  const db = readDb()
-  const existing = db.products.find((p) => p.id === id)
-  if (!existing) return res.status(404).json({ message: 'Product not found' })
+  const id = Number(req.params.id);
+  const db = readDb();
+  const existing = db.products.find((p) => p.id === id);
+  if (!existing) return res.status(404).json({ message: 'Product not found' });
 
-  const body = req.body ?? {}
-  const error = validateProduct(body)
-  if (error) return res.status(400).json({ message: error })
+  const body = req.body ?? {};
+  const error = validateProduct(body);
+  if (error) return res.status(400).json({ message: error });
 
   // Immutable update: build a new array instead of mutating in place
   const updated = {
@@ -1670,32 +1707,32 @@ app.put('/products/:id', requireAuth, (req, res) => {
     name: body.name.trim(),
     price: body.price,
     description: body.description ?? '',
-  }
-  db.products = db.products.map((p) => (p.id === id ? updated : p))
-  writeDb(db)
-  res.json(updated)
-})
+  };
+  db.products = db.products.map((p) => (p.id === id ? updated : p));
+  writeDb(db);
+  res.json(updated);
+});
 
 app.delete('/products/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id)
-  const db = readDb()
+  const id = Number(req.params.id);
+  const db = readDb();
   if (!db.products.some((p) => p.id === id)) {
-    return res.status(404).json({ message: 'Product not found' })
+    return res.status(404).json({ message: 'Product not found' });
   }
-  db.products = db.products.filter((p) => p.id !== id)
-  writeDb(db)
-  res.status(204).end()
-})
+  db.products = db.products.filter((p) => p.id !== id);
+  writeDb(db);
+  res.status(204).end();
+});
 
 // Anything else -> JSON 404 (instead of Express' HTML error page)
 app.use((req, res) => {
-  res.status(404).json({ message: `No route for ${req.method} ${req.path}` })
-})
+  res.status(404).json({ message: `No route for ${req.method} ${req.path}` });
+});
 
 app.listen(PORT, () => {
-  console.log(`Mock API running at http://localhost:${PORT}`)
-  console.log('Login with: admin / admin')
-})
+  console.log(`Mock API running at http://localhost:${PORT}`);
+  console.log('Login with: admin / admin');
+});
 '@
 
 # ---- README ----------------------------------------------------------------------
@@ -1746,6 +1783,7 @@ mock-server/
   db.json              Created on first run, git-ignored; delete it to reset the data
 src/
   config/env.ts        Validates VITE_* env vars with zod, exports `config`
+  constants/           Shared constants: httpStatus.ts, httpErrorMessages.ts, barrel index.ts
   lib/                 Shared infrastructure: apiClient (axios), queryClient, router
   providers/           AppProviders = QueryClientProvider + RouterProvider
   features/
