@@ -7,7 +7,7 @@
 #    - Vite + React 19 + TypeScript + React Compiler + ESLint (npm create vite)
 #    - axios, TanStack Router (file-based routes + devtools), TanStack Query,
 #      zustand, zod, react-hook-form, SCSS
-#    - src/{config,constants,features/{auth,home,products},lib,providers,routes}
+#    - src/{config,constants,features/{auth,home,products},lib,providers,routes,types}
 #    - .env + .env.example (.env is git-ignored), `@/` -> `src/` alias
 #    - Express mock API: login (admin / admin) + product CRUD, file-backed
 #
@@ -576,11 +576,34 @@ export { DEFAULT_ERROR_MESSAGE, HTTP_ERROR_MESSAGES, NETWORK_ERROR_MESSAGE } fro
 export { HTTP_STATUS } from './httpStatus';
 __TPL__
 
+# ---- src/types ------------------------------------------------------------------
+write_file 'src/types/apiResponse.types.ts' <<'__TPL__'
+export interface IResponse<T> {
+  data: T;
+  message?: string;
+  status: number;
+}
+
+export interface IPaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export interface IResponseError {
+  statusCode: number | string;
+  message: string;
+}
+__TPL__
+
 # ---- src/lib ---------------------------------------------------------------------
 write_file 'src/lib/apiClient.ts' <<'__TPL__'
 import axios, { type AxiosError } from 'axios';
 import { config } from '@/config/env';
+import { DEFAULT_ERROR_MESSAGE, HTTP_ERROR_MESSAGES, HTTP_STATUS, NETWORK_ERROR_MESSAGE } from '@/constants';
 import { useAuthStore } from '@/features/auth/auth.store';
+import type { IResponseError } from '@/types/apiResponse.types';
 
 export const apiClient = axios.create({
   baseURL: config.api.baseUrl,
@@ -597,34 +620,31 @@ apiClient.interceptors.request.use((requestConfig) => {
   return requestConfig;
 });
 
-// Response interceptor: the mock server answers 403 for a missing/invalid
-// token, so log out and send the user back to /login.
+// Response interceptor: give every failed request a readable `error.message`,
+// so components can show it directly. It also logs out on 401.
 // Keep this status in sync with `requireAuth` in mock-server/server.js.
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 403) {
-      useAuthStore.getState().logout();
+  (error: AxiosError<IResponseError>) => {
+    if (error.response) {
+      const { status, data } = error.response;
+      // Prefer the backend's message (body shape: IResponseError in src/types),
+      // then our own message for this status code.
+      error.message = data?.message ?? HTTP_ERROR_MESSAGES[status] ?? DEFAULT_ERROR_MESSAGE;
+
+      // A wrong password on /auth/login is also a 401, but there is no token yet,
+      // so skip the logout (its page reload would hide the error message).
+      if (status === HTTP_STATUS.UNAUTHORIZED && useAuthStore.getState().token) {
+        useAuthStore.getState().logout();
+      }
+    } else if (error.request) {
+      // Request left the browser but no response came back (offline, DNS, CORS, timeout).
+      error.message = NETWORK_ERROR_MESSAGE;
     }
+
     return Promise.reject(error);
   },
 );
-__TPL__
-
-write_file 'src/lib/apiError.ts' <<'__TPL__'
-import { isAxiosError } from 'axios';
-
-// Pull a human-readable message out of whatever a request threw.
-// The mock server always answers failures with `{ message: string }`.
-export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong'): string {
-  if (isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message ?? error.message ?? fallback;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return fallback;
-}
 __TPL__
 
 write_file 'src/lib/queryClient.ts' <<'__TPL__'
@@ -668,7 +688,6 @@ write_file 'src/lib/index.ts' <<'__TPL__'
 // `apiClient` is listed first on purpose - it must be initialised before the
 // router pulls in the feature modules that use it.
 export { apiClient } from './apiClient';
-export { getApiErrorMessage } from './apiError';
 export { queryClient } from './queryClient';
 export { router } from './router';
 __TPL__
@@ -760,7 +779,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from '@tanstack/react-router';
-import { getApiErrorMessage } from '@/lib';
 import { useLogin } from '../auth.query';
 import { useAuthStore } from '../auth.store';
 
@@ -827,7 +845,7 @@ export const LoginPage = ({ redirectTo }: LoginPageProps) => {
             {errors.password && <span className="error">{errors.password.message}</span>}
           </div>
 
-          {login.isError && <div className="alert">{getApiErrorMessage(login.error)}</div>}
+          {login.isError && <div className="alert">{login.error.message}</div>}
 
           <button className="btn" type="submit" disabled={login.isPending}>
             {login.isPending ? 'Logging in...' : 'Login'}
@@ -972,7 +990,6 @@ __TPL__
 
 write_file 'src/features/products/components/ProductList.tsx' <<'__TPL__'
 import { Link } from '@tanstack/react-router';
-import { getApiErrorMessage } from '@/lib';
 import { useDeleteProduct, useProducts } from '../product.query';
 
 export const ProductList = () => {
@@ -986,7 +1003,7 @@ export const ProductList = () => {
   };
 
   if (isLoading) return <p>Loading products...</p>;
-  if (isError) return <div className="alert">{getApiErrorMessage(error)}</div>;
+  if (isError) return <div className="alert">{error.message}</div>;
 
   return (
     <>
@@ -998,7 +1015,7 @@ export const ProductList = () => {
       </div>
 
       {deleteProduct.isError && (
-        <div className="alert">{getApiErrorMessage(deleteProduct.error)}</div>
+        <div className="alert">{deleteProduct.error.message}</div>
       )}
 
       <table className="table">
@@ -1065,7 +1082,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { getApiErrorMessage } from '@/lib';
 import { useCreateProduct, useProduct, useUpdateProduct } from '../product.query';
 
 type ProductFormProps = {
@@ -1119,7 +1135,7 @@ export const ProductForm = ({ mode, productId }: ProductFormProps) => {
 
   if (mode !== 'add' && product.isLoading) return <p>Loading product...</p>;
   if (mode !== 'add' && product.isError) {
-    return <div className="alert">{getApiErrorMessage(product.error)}</div>;
+    return <div className="alert">{product.error.message}</div>;
   }
 
   if (mode === 'view') {
@@ -1173,7 +1189,7 @@ export const ProductForm = ({ mode, productId }: ProductFormProps) => {
           {errors.description && <span className="error">{errors.description.message}</span>}
         </div>
 
-        {saveError && <div className="alert">{getApiErrorMessage(saveError)}</div>}
+        {saveError && <div className="alert">{saveError.message}</div>}
 
         <div className="form-actions">
           <button className="btn" type="submit" disabled={saving}>
@@ -1604,14 +1620,14 @@ const DUMMY_TOKEN = 'mock-token-admin';
 
 // ---------------------------------------------------------------------------
 // Auth middleware: protected routes need "Authorization: Bearer <token>".
-// A missing/invalid token gets 403, which the frontend's axios interceptor
+// A missing/invalid token gets 401, which the frontend's axios interceptor
 // turns into a logout + redirect to /login. Keep the two in sync.
 // ---------------------------------------------------------------------------
 const requireAuth = (req, res, next) => {
   const header = req.headers.authorization ?? '';
   const token = header.startsWith('Bearer ') ? header.slice('Bearer '.length) : null;
   if (token !== DUMMY_TOKEN) {
-    return res.status(403).json({ message: 'Forbidden: missing or invalid token' });
+    return res.status(401).json({ message: 'Unauthorized: missing or invalid token' });
   }
   next();
 };
@@ -1768,6 +1784,7 @@ mock-server/
 src/
   config/env.ts        Validates VITE_* env vars with zod, exports `config`
   constants/           Shared constants: httpStatus.ts, httpErrorMessages.ts, barrel index.ts
+  types/               Shared API types: IResponse, IPaginatedResponse, IResponseError
   lib/                 Shared infrastructure: apiClient (axios), queryClient, router
   providers/           AppProviders = QueryClientProvider + RouterProvider
   features/
@@ -1791,8 +1808,8 @@ Conventions:
 
 - UI lives in `src/features/<feature>/` with a barrel `index.ts`; route files stay thin.
 - `@/` is an alias for `src/` (set in both `vite.config.ts` and `tsconfig.app.json`).
-- The mock API returns **403** for a missing/invalid token and the axios response
-  interceptor logs out + redirects to `/login` on 403. Change both or neither.
+- The mock API returns **401** for a missing/invalid token and the axios response
+  interceptor logs out + redirects to `/login` on 401. Change both or neither.
 
 ## Environment variables
 
@@ -1817,7 +1834,7 @@ on startup in `src/config/env.ts`; the app refuses to boot with a bad value.
 | DELETE | `/products/:id` | yes  | 204                                           |
 
 "Auth: yes" means the request needs `Authorization: Bearer <token>` using the token
-from the login response. Without it the server answers **403**.
+from the login response. Without it the server answers **401**.
 __TPL__
 
 # ---- .gitignore additions ---------------------------------------------------
