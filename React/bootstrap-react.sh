@@ -1859,9 +1859,13 @@ const fs = require('node:fs')
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 pkg.scripts['mock-api'] = 'node mock-server/server.js'
 pkg.scripts['dev:all'] = 'concurrently -k -n api,web -c blue,green "npm run mock-api" "npm run dev"'
+// typescript-eslint 8 supports TypeScript up to 6.0, not 7. `create-vite --eslint`
+// means to pin TypeScript 6 for that reason, but a bug in create-vite 9.3 loses the
+// pin and npm install fails with ERESOLVE. Remove this once typescript-eslint supports 7.
+pkg.devDependencies.typescript = '~6.0.3'
 fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n')
 __JS__
-printf '  %s\n' 'package.json (scripts: mock-api, dev:all)'
+printf '  %s\n' 'package.json (scripts: mock-api, dev:all; typescript ~6.0.3 for ESLint)'
 
 # ---- dependencies -----------------------------------------------------------
 RUNTIME_DEPS=(
