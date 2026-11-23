@@ -1,0 +1,13 @@
+{
+  "name": "bookshelf",
+  "version": "1.0.0",
+  "description": "A tiny command-line reading list. The practice project for the Claude course.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/cli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

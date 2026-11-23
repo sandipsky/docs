@@ -1,0 +1,8 @@
+{
+  "customer": "Maya",
+  "items": [
+    { "name": "Laptop", "price": "$1,299.00", "quantity": 1 },
+    { "name": "Notebook", "price": "$4.50", "quantity": 3 },
+    { "name": "Pen", "price": "$1.20", "quantity": 10 }
+  ]
+}

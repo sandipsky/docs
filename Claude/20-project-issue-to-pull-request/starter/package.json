@@ -1,0 +1,13 @@
+{
+  "name": "library-loans",
+  "version": "1.0.0",
+  "description": "Loan and late-fee rules for a small library. Starter for the Level 2 project of the Claude course.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

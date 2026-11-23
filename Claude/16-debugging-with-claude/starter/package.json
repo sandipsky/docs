@@ -1,0 +1,14 @@
+{
+  "name": "checkout",
+  "version": "1.0.0",
+  "description": "A small receipt printer with three bugs in it. Practice for the debugging chapter of the Claude course.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/receipt.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
